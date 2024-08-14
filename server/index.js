@@ -1,6 +1,8 @@
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
+const expressGraphql = require("express-graphql");
+const schema = require("./schema");
 const cookieParser = require("cookie-parser");
 require("dotenv").config();
 
@@ -20,6 +22,14 @@ mongoose
   .connect(process.env.MONGO_URL)
   .then(() => console.log("Connect to mongodb"))
   .catch((error) => console.log("Error:", error));
+
+app.use(
+  "/graphql",
+  expressGraphql({
+    schema,
+    graphiql: true,
+  })
+);
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
