@@ -2,11 +2,11 @@ const mongoose = require("mongoose");
 
 const StudentLessonSchema = mongoose.Schema(
   {
-    teacher_Lesson: {
+    teacherLessonId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "teacher_Lesson",
     },
-    student: {
+    studentId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Student",
     },
@@ -16,6 +16,11 @@ const StudentLessonSchema = mongoose.Schema(
     },
   },
   { timestamps: true }
+);
+
+StudentLessonSchema.index(
+  { teacherLessonId: 1, studentId: 1 },
+  { unique: true }
 );
 
 const Student_Lesson = mongoose.model("Student_Lesson", StudentLessonSchema);

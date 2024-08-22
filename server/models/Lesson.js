@@ -18,6 +18,7 @@ const LessonSchema = mongoose.Schema(
         "Psychology",
         "Computer_Science",
       ],
+      unique: true,
     },
     title: String,
     description: String,

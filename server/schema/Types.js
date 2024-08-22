@@ -3,6 +3,8 @@ const {
   GraphQLString,
   GraphQLInt,
   GraphQLBoolean,
+  GraphQLID,
+  GraphQLList,
 } = require("graphql");
 const Lesson = require("../models/Lesson");
 const Teacher = require("../models/Teacher");
@@ -13,6 +15,7 @@ const Teacher_Lesson = require("../models/Teacher_Lesson");
 const TeacherType = new GraphQLObjectType({
   name: "Teacher",
   fields: () => ({
+    id: { type: GraphQLID },
     firstname: { type: GraphQLString },
     lastname: { type: GraphQLString },
     email: { type: GraphQLString },
@@ -32,6 +35,7 @@ const TeacherType = new GraphQLObjectType({
 const StudentType = new GraphQLObjectType({
   name: "Student",
   fields: () => ({
+    id: { type: GraphQLID },
     firstname: { type: GraphQLString },
     lastname: { type: GraphQLString },
     email: { type: GraphQLString },
@@ -47,6 +51,7 @@ const StudentType = new GraphQLObjectType({
 const LessonType = new GraphQLObjectType({
   name: "Lesson",
   fields: () => ({
+    id: { type: GraphQLID },
     material: { type: GraphQLString },
     title: { type: GraphQLString },
     description: { type: GraphQLString },
@@ -55,8 +60,9 @@ const LessonType = new GraphQLObjectType({
 
 // Teacher_Lesson Type
 const TeacherLessonType = new GraphQLObjectType({
-  name: "Teacher_Lesson",
+  name: "TeacherLesson",
   fields: () => ({
+    id: { type: GraphQLID },
     lesson: {
       type: LessonType,
       resolve(parent, args) {
@@ -71,14 +77,14 @@ const TeacherLessonType = new GraphQLObjectType({
     },
     students_num: { type: GraphQLInt },
     students: {
-      type: [StudentType],
+      type: GraphQLList(StudentType),
       resolve(parent, args) {
         return parent.students.map((studentId) => Student.findById(studentId));
       },
     },
     cost: { type: GraphQLInt },
     rating: { type: GraphQLInt },
-    week_days: { type: GraphQLInt },
+    week_days: { type: GraphQLList(GraphQLInt) },
     type: { type: GraphQLString },
     start_time: { type: GraphQLInt },
     end_time: { type: GraphQLInt },
@@ -87,12 +93,13 @@ const TeacherLessonType = new GraphQLObjectType({
 });
 
 const StudentLessonType = new GraphQLObjectType({
-  name: "Student_Lesson",
+  name: "StudentLesson",
   fields: () => ({
-    teacher_lesson: {
+    id: { type: GraphQLID },
+    teacherLesson: {
       type: TeacherLessonType,
       resolve(parent, args) {
-        return Teacher_Lesson.findById(parent.teacher_lesson);
+        return Teacher_Lesson.findById(parent.teacherLessonId);
       },
     },
     student: {

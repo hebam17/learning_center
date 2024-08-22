@@ -10,8 +10,12 @@ const TeacherLessonSchema = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Teacher",
     },
-    students_num: Number,
-    students: { type: [mongoose.Schema.Types.ObjectId], ref: "Student" },
+    students_num: { type: Number, default: 20 },
+    students: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "Student",
+      default: [],
+    },
     cost: Number,
     rating: {
       type: Number,

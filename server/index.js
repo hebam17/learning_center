@@ -1,19 +1,22 @@
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
-const expressGraphql = require("express-graphql");
+require("dotenv").config();
+const { graphqlHTTP } = require("express-graphql");
 const schema = require("./schema");
 const cookieParser = require("cookie-parser");
-require("dotenv").config();
 
 const app = express();
-app.use(cookieParser());
 app.use(
   cors({
     credentials: true,
     origin: process.env.CLIENT_URL,
   })
 );
+
+// app.use(cors());
+
+app.use(cookieParser());
 
 app.disable("x-powered-by");
 
@@ -25,13 +28,13 @@ mongoose
 
 app.use(
   "/graphql",
-  expressGraphql({
+  graphqlHTTP({
     schema,
-    graphiql: true,
+    graphiql: process.env.NODE_ENV === "development",
   })
 );
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8000;
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
 });
