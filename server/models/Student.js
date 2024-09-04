@@ -13,6 +13,10 @@ const StudentSchema = mongoose.Schema(
       type: String,
       require: [true, "please provide a password"],
     },
+    isActive: {
+      type: Boolean,
+      default: false,
+    },
 
     resetPasswordToken: String,
     resetPasswordExpiresAt: Date,

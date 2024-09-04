@@ -4,6 +4,7 @@ const {
   GraphQLString,
   GraphQLInt,
   GraphQLID,
+  GraphQLBoolean,
 } = require("graphql");
 const { StudentType, StudentLessonType, LessonType } = require("./Types");
 const Student = require("../models/Student");
@@ -14,14 +15,22 @@ const queryFields = {
   students: {
     type: new GraphQLList(StudentType),
     resolve(parent, args) {
-      return Student.find();
+      return Student.find(
+        {},
+        { firstname: 1, lastname: 1, email: 1, isActive: 1 }
+      );
     },
   },
   student: {
     type: StudentType,
     args: { id: { type: GraphQLID } },
     resolve(parent, args) {
-      return Student.findById(args.id);
+      return Student.findById(args.id, {
+        firstname: 1,
+        lastname: 1,
+        email: 1,
+        isActive: 1,
+      });
     },
   },
   StudentLessons: {
@@ -41,20 +50,14 @@ const mutationFields = {
       firstname: { type: GraphQLNonNull(GraphQLString) },
       lastname: { type: GraphQLNonNull(GraphQLString) },
       email: { type: GraphQLNonNull(GraphQLString) },
-      resetPasswordToken: { type: GraphQLString },
-      resetPasswordExpiresAt: { type: GraphQLInt },
-      verificationPasswordToken: { type: GraphQLString },
-      verificationPasswordExpiresAt: { type: GraphQLInt },
+      isActive: { type: GraphQLBoolean },
     },
     resolve(parent, args) {
       const student = new Student({
         firstname: args.firstname,
         lastname: args.lastname,
         email: args.email,
-        resetPasswordToken: args.resetPasswordToken,
-        resetPasswordExpiresAt: args.resetPasswordExpiresAt,
-        verificationPasswordToken: args.verificationPasswordToken,
-        verificationPasswordExpiresAt: args.verificationPasswordExpiresAt,
+        isActive: args.isActive,
       });
 
       return student.save();
@@ -68,10 +71,7 @@ const mutationFields = {
       firstname: { type: GraphQLString },
       lastname: { type: GraphQLString },
       email: { type: GraphQLString },
-      resetPasswordToken: { type: GraphQLString },
-      resetPasswordExpiresAt: { type: GraphQLInt },
-      verificationPasswordToken: { type: GraphQLString },
-      verificationPasswordExpiresAt: { type: GraphQLInt },
+      isActive: { type: GraphQLBoolean },
     },
     resolve(parent, args) {
       return Student.findByIdAndUpdate(
@@ -81,10 +81,7 @@ const mutationFields = {
             firstname: args.firstname,
             lastname: args.lastname,
             email: args.email,
-            resetPasswordToken: args.resetPasswordToken,
-            resetPasswordExpiresAt: args.resetPasswordExpiresAt,
-            verificationPasswordToken: args.verificationPasswordToken,
-            verificationPasswordExpiresAt: args.verificationPasswordExpiresAt,
+            isActive: args.isActive,
           },
         },
         { new: true }

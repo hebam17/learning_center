@@ -16,14 +16,29 @@ const queryFields = {
   teachers: {
     type: new GraphQLList(TeacherType),
     resolve(parent, args) {
-      return Teacher.find();
+      return Teacher.find(
+        {},
+        {
+          password: 0,
+          resetPasswordToken,
+          resetPasswordExpiresAt,
+          verificationPasswordToken,
+          verificationPasswordExpiresAt,
+        }
+      );
     },
   },
   teacher: {
     type: TeacherType,
     args: { id: { type: GraphQLID } },
     resolve(parent, args) {
-      return Teacher.findById(args.id);
+      return Teacher.findById(args.id, {
+        password: 0,
+        resetPasswordToken,
+        resetPasswordExpiresAt,
+        verificationPasswordToken,
+        verificationPasswordExpiresAt,
+      });
     },
   },
   teacherLessons: {
@@ -57,10 +72,6 @@ const mutationFields = {
       classes_num: { type: GraphQLInt },
       salary: { type: GraphQLInt },
       isActive: { type: GraphQLBoolean },
-      resetPasswordToken: { type: GraphQLString },
-      resetPasswordExpiresAt: { type: GraphQLInt },
-      verificationPasswordToken: { type: GraphQLString },
-      verificationPasswordExpiresAt: { type: GraphQLInt },
     },
     resolve(parent, args) {
       const teacher = new Teacher({
@@ -72,10 +83,6 @@ const mutationFields = {
         classes_num: args.classes_num,
         salary: args.salary,
         isActive: args.isActive,
-        resetPasswordToken: args.resetPasswordToken,
-        resetPasswordExpiresAt: args.resetPasswordExpiresAt,
-        verificationPasswordToken: args.verificationPasswordToken,
-        verificationPasswordExpiresAt: args.verificationPasswordExpiresAt,
       });
 
       return teacher.save();
@@ -102,10 +109,6 @@ const mutationFields = {
       classes_num: { type: GraphQLInt },
       salary: { type: GraphQLInt },
       isActive: { type: GraphQLBoolean },
-      resetPasswordToken: { type: GraphQLString },
-      resetPasswordExpiresAt: { type: GraphQLInt },
-      verificationPasswordToken: { type: GraphQLString },
-      verificationPasswordExpiresAt: { type: GraphQLInt },
     },
     resolve(parent, args) {
       return Teacher.findByIdAndUpdate(
@@ -120,10 +123,6 @@ const mutationFields = {
             classes_num: args.classes_num,
             salary: args.salary,
             isActive: args.isActive,
-            resetPasswordToken: args.resetPasswordToken,
-            resetPasswordExpiresAt: args.resetPasswordExpiresAt,
-            verificationPasswordToken: args.verificationPasswordToken,
-            verificationPasswordExpiresAt: args.verificationPasswordExpiresAt,
           },
         },
         { new: true }

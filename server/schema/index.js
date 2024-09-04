@@ -24,6 +24,11 @@ const {
   mutationFields: studentLessonMutationFields,
 } = require("./StudentLessonSchema");
 
+const {
+  queryFields: authQueryFields,
+  mutationFields: authMutationFields,
+} = require("./AuthSchema");
+
 const RootQuery = new GraphQLObjectType({
   name: "RootQueryType",
   fields: () => ({
@@ -32,6 +37,7 @@ const RootQuery = new GraphQLObjectType({
     ...lessonQueryFields,
     ...teacherLessonQueryFields,
     ...studentLessonQueryFields,
+    ...authQueryFields,
   }),
 });
 
@@ -43,6 +49,7 @@ const mutation = new GraphQLObjectType({
     ...lessonMutationFields,
     ...teacherLessonMutationFields,
     ...studentLessonMutationFields,
+    ...authMutationFields,
   }),
 });
 

@@ -84,6 +84,7 @@ const TeacherLessonType = new GraphQLObjectType({
     },
     cost: { type: GraphQLInt },
     rating: { type: GraphQLInt },
+    start_date: { type: GraphQLInt },
     week_days: { type: GraphQLList(GraphQLInt) },
     type: { type: GraphQLString },
     start_time: { type: GraphQLInt },
@@ -112,8 +113,34 @@ const StudentLessonType = new GraphQLObjectType({
   }),
 });
 
+// Auth Types
+const RegisterSuccessType = new GraphQLObjectType({
+  name: "Register",
+  fields: () => ({
+    message: { type: GraphQLString },
+    // id: { type: GraphQLID },
+    userId: { type: GraphQLID },
+  }),
+});
+
+const registerVarificationType = new GraphQLObjectType({
+  name: "RegisterVerification",
+  fields: () => ({
+    accessToken: { type: GraphQLString },
+  }),
+});
+
+const loginType = new GraphQLObjectType({
+  name: "Login",
+  fields: () => ({
+    accessToken: { type: GraphQLString },
+  }),
+});
 exports.TeacherType = TeacherType;
 exports.StudentType = StudentType;
 exports.LessonType = LessonType;
 exports.TeacherLessonType = TeacherLessonType;
 exports.StudentLessonType = StudentLessonType;
+exports.RegisterSuccessType = RegisterSuccessType;
+exports.registerVarificationType = registerVarificationType;
+exports.loginType = loginType;
