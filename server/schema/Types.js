@@ -136,6 +136,14 @@ const loginType = new GraphQLObjectType({
     accessToken: { type: GraphQLString },
   }),
 });
+
+const logout = new GraphQLObjectType({
+  name: "logout",
+  fields: () => ({
+    message: { type: GraphQLString },
+  }),
+});
+
 exports.TeacherType = TeacherType;
 exports.StudentType = StudentType;
 exports.LessonType = LessonType;
@@ -144,3 +152,4 @@ exports.StudentLessonType = StudentLessonType;
 exports.RegisterSuccessType = RegisterSuccessType;
 exports.registerVarificationType = registerVarificationType;
 exports.loginType = loginType;
+exports.logoutType = logoutType;

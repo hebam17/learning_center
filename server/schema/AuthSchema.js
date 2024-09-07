@@ -13,6 +13,7 @@ const {
   RegisterSuccessType,
   registerVarificationType,
   loginType,
+  logoutType,
 } = require("./Types");
 const Student = require("../models/Student");
 const Teacher = require("../models/Teacher");
@@ -30,9 +31,9 @@ const mutationFields = {
       email: { type: GraphQLString },
       password: { type: GraphQLString },
 
-      prof: {
+      type: {
         type: new GraphQLEnumType({
-          name: "profession",
+          name: "registerType",
           values: {
             student: { value: "Student" },
             teacher: { value: "Teacher" },
@@ -52,7 +53,7 @@ const mutationFields = {
         });
       }
 
-      const isTeacher = args.prof === "Teacher";
+      const isTeacher = args.type === "Teacher";
 
       let existingUser;
       try {
@@ -136,7 +137,7 @@ const mutationFields = {
       userId: { type: GraphQLID },
       type: {
         type: new GraphQLEnumType({
-          name: "type",
+          name: "verifyType",
           values: {
             student: { value: "Student" },
             teacher: { value: "Teacher" },
@@ -331,6 +332,39 @@ const mutationFields = {
           },
         });
       }
+    },
+  },
+
+  logout: {
+    type: logoutType,
+    args: {
+      userId: { type: GraphQLID },
+      type: {
+        type: new GraphQLEnumType({
+          name: "logoutType",
+          values: {
+            student: { value: "Student" },
+            teacher: { value: "Teacher" },
+          },
+        }),
+      },
+    },
+
+    async resolve(parent, args, { req, res }) {
+      // put this in a function
+      const { isAuth, user } = req.raw;
+      if (!isAuth || !user) return { message: "You are already logged out" };
+
+      const cookies = req.raw.cookies;
+      if (!cookies?.token) return { message: "You are already logged out" };
+
+      res.clearCookie("token", {
+        httpOnly: true,
+        sameSite: "none",
+        secure: true,
+      });
+
+      return { message: "You logged out successfully" };
     },
   },
 };
