@@ -16,6 +16,7 @@ const {
 } = require("./Types");
 const Student = require("../models/Student");
 const Teacher = require("../models/Teacher");
+const { createToken, createAccessToken } = require("../utils/createToken");
 // const { SendVerificationEmail } = require("../mail/emails");
 
 const queryFields = {};
@@ -181,30 +182,10 @@ const mutationFields = {
           },
         });
 
-      let fullname = `${verifiedUser.firstname} ${verifiedUser.lastname}`;
-      // set roles
-      const roles =
-        args.type === "Student" ? [args.type] : [args.type, verifiedUser.role];
-      const accessToken = jwt.sign(
-        {
-          userId: verifiedUser._id,
-          username: fullname,
-          roles,
-        },
-        process.env.ACCESS_TOKEN_SECRET,
-        { expiresIn: "15m" }
+      const { accessToken, refreshToken } = createToken(
+        verifiedUser,
+        args.type
       );
-
-      const refreshToken = jwt.sign(
-        {
-          userId: verifiedUser._id,
-          username: fullname,
-          roles,
-        },
-        process.env.REFRESH_TOKEN_SECRET,
-        { expiresIn: "7d" }
-      );
-
       // set the http only cookie to send the refresh token
       res.cookie("token", refreshToken, {
         sameSite: "none",
@@ -241,8 +222,116 @@ const mutationFields = {
     args: {
       email: { type: GraphQLString },
       password: { type: GraphQLString },
+      type: {
+        type: new GraphQLEnumType({
+          name: "LoginType",
+          values: {
+            student: { value: "Student" },
+            teacher: { value: "Teacher" },
+          },
+        }),
+      },
     },
-    async resolve(parent, args, { req, res }) {},
+    async resolve(parent, args, { req, res }) {
+      const { email, password, type } = args;
+
+      const { isAuth, user: authUser } = req.raw;
+
+      if (isAuth && authUser) {
+        throw new GraphQLError("You are already logged in!");
+      }
+
+      if (!email?.trim() && password?.trim()) {
+        throw new GraphQLError("Please provide all required fields");
+      }
+      let user;
+      try {
+        user =
+          type === "Student"
+            ? await Student.findOne({ email })
+            : await Teacher.findOne({ email });
+      } catch (err) {
+        throw new GraphQLError(
+          "Sorry we have a problem connecting to the database, Please try again later!",
+          {
+            extensions: {
+              http: { status: 500 },
+            },
+          }
+        );
+      }
+      if (!user)
+        throw new GraphQLError("User is not found!", {
+          extensions: {
+            http: { status: 404 },
+          },
+        });
+
+      const isValid = await bcrypt.compare(password, user.password);
+
+      if (!isValid) throw new GraphQLError("email or password is Invalid");
+
+      const { accessToken, refreshToken } = createToken(user, type);
+
+      res.cookie("token", refreshToken, {
+        sameSite: "none",
+        secure: true,
+        httpOnly: true,
+        maxAge: 7 * 24 * 60 * 60 * 1000, // cookie expire in 7days like the refresh token
+      });
+
+      return { accessToken };
+    },
+  },
+
+  refresh: {
+    type: loginType,
+
+    async resolve(parent, args, { req, res }) {
+      const cookies = req.raw.cookies;
+      if (!cookies?.token)
+        throw new GraphQLError("You are unauthorized", {
+          extensions: {
+            http: { status: 401 },
+          },
+        });
+
+      const refreshToken = cookies.token;
+
+      try {
+        const userData = jwt.verify(
+          refreshToken,
+          process.env.REFRESH_TOKEN_SECRET
+        );
+
+        try {
+          user = userData.roles.includes("Student")
+            ? await Student.findById(userData.userId)
+            : await Teacher.findById(userData.userId);
+        } catch (err) {
+          throw new GraphQLError(
+            "Sorry we have a problem connecting to the database, Please try again later!",
+            {
+              extensions: {
+                http: { status: 500 },
+              },
+            }
+          );
+        }
+
+        const type = userData.roles.includes("Student") ? "Student" : "Teacher";
+
+        const { accessToken } = createAccessToken(user, type);
+        return { accessToken };
+      } catch (err) {
+        throw new GraphQLError("You are unauthorized", {
+          extensions: {
+            code: "FORBIDDEN",
+            http: { status: 403 },
+          },
+        });
+      }
+    },
   },
 };
 
