@@ -123,36 +123,15 @@ const RegisterSuccessType = new GraphQLObjectType({
   }),
 });
 
-const registerVarificationType = new GraphQLObjectType({
-  name: "RegisterVerification",
+const tokenType = new GraphQLObjectType({
+  name: "Token",
   fields: () => ({
     accessToken: { type: GraphQLString },
   }),
 });
 
-const loginType = new GraphQLObjectType({
-  name: "Login",
-  fields: () => ({
-    accessToken: { type: GraphQLString },
-  }),
-});
-
-const logoutType = new GraphQLObjectType({
-  name: "logout",
-  fields: () => ({
-    message: { type: GraphQLString },
-  }),
-});
-
-const forgetPasswordType = new GraphQLObjectType({
-  name: "forgetPassword",
-  fields: () => ({
-    message: { type: GraphQLString },
-  }),
-});
-
-const resetPasswordType = new GraphQLObjectType({
-  name: "resetPassword",
+const messageType = new GraphQLObjectType({
+  name: "Message",
   fields: () => ({
     message: { type: GraphQLString },
   }),
@@ -164,8 +143,5 @@ exports.LessonType = LessonType;
 exports.TeacherLessonType = TeacherLessonType;
 exports.StudentLessonType = StudentLessonType;
 exports.RegisterSuccessType = RegisterSuccessType;
-exports.registerVarificationType = registerVarificationType;
-exports.loginType = loginType;
-exports.logoutType = logoutType;
-exports.forgetPasswordType = forgetPasswordType;
-exports.resetPasswordType = resetPasswordType;
+exports.tokenType = tokenType;
+exports.messageType = messageType;

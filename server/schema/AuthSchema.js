@@ -9,14 +9,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const otpGenerator = require("otp-generator");
 
-const {
-  RegisterSuccessType,
-  registerVarificationType,
-  loginType,
-  logoutType,
-  forgetPasswordType,
-  resetPasswordType,
-} = require("./Types");
+const { RegisterSuccessType, tokenType, messageType } = require("./Types");
 const Student = require("../models/Student");
 const Teacher = require("../models/Teacher");
 const { createToken, createAccessToken } = require("../utils/createToken");
@@ -134,7 +127,7 @@ const mutationFields = {
   },
 
   registerVarification: {
-    type: registerVarificationType,
+    type: tokenType,
     args: {
       userId: { type: GraphQLID },
       type: {
@@ -221,13 +214,13 @@ const mutationFields = {
   },
 
   login: {
-    type: loginType,
+    type: tokenType,
     args: {
       email: { type: GraphQLString },
       password: { type: GraphQLString },
       type: {
         type: new GraphQLEnumType({
-          name: "LoginType",
+          name: "tokenType",
           values: {
             student: { value: "Student" },
             teacher: { value: "Teacher" },
@@ -288,7 +281,7 @@ const mutationFields = {
   },
 
   refresh: {
-    type: loginType,
+    type: tokenType,
 
     async resolve(parent, args, { req, res }) {
       const cookies = req.raw.cookies;
@@ -338,7 +331,7 @@ const mutationFields = {
   },
 
   logout: {
-    type: logoutType,
+    type: messageType,
     args: {
       userId: { type: GraphQLID },
       type: {
@@ -370,7 +363,7 @@ const mutationFields = {
   },
 
   forgetPassword: {
-    type: forgetPasswordType,
+    type: messageType,
     args: {
       email: { type: GraphQLString },
       type: {
@@ -445,7 +438,7 @@ const mutationFields = {
     },
   },
   resetPassword: {
-    type: resetPasswordType,
+    type: messageType,
     args: {
       email: { type: GraphQLString },
       code: { type: GraphQLString },
