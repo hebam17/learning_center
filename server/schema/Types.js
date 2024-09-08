@@ -137,8 +137,22 @@ const loginType = new GraphQLObjectType({
   }),
 });
 
-const logout = new GraphQLObjectType({
+const logoutType = new GraphQLObjectType({
   name: "logout",
+  fields: () => ({
+    message: { type: GraphQLString },
+  }),
+});
+
+const forgetPasswordType = new GraphQLObjectType({
+  name: "forgetPassword",
+  fields: () => ({
+    message: { type: GraphQLString },
+  }),
+});
+
+const resetPasswordType = new GraphQLObjectType({
+  name: "resetPassword",
   fields: () => ({
     message: { type: GraphQLString },
   }),
@@ -153,3 +167,5 @@ exports.RegisterSuccessType = RegisterSuccessType;
 exports.registerVarificationType = registerVarificationType;
 exports.loginType = loginType;
 exports.logoutType = logoutType;
+exports.forgetPasswordType = forgetPasswordType;
+exports.resetPasswordType = resetPasswordType;

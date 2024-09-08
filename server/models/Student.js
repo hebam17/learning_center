@@ -20,8 +20,8 @@ const StudentSchema = mongoose.Schema(
 
     resetPasswordToken: String,
     resetPasswordExpiresAt: Date,
-    verificationPasswordToken: String,
-    verificationPasswordExpiresAt: Date,
+    verificationEmailToken: String,
+    verificationEmailExpiresAt: Date,
   },
   { timestamps: true }
 );

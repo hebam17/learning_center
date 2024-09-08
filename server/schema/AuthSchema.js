@@ -14,6 +14,8 @@ const {
   registerVarificationType,
   loginType,
   logoutType,
+  forgetPasswordType,
+  resetPasswordType,
 } = require("./Types");
 const Student = require("../models/Student");
 const Teacher = require("../models/Teacher");
@@ -94,8 +96,8 @@ const mutationFields = {
             lastname: args.lastname,
             email: args.email,
             password: hashedPassword,
-            verificationPasswordToken: verificationToken,
-            verificationPasswordExpiresAt: Date.now() + 24 * 60 * 60 * 1000, // 24hours || 1day
+            verificationEmailToken: verificationToken,
+            verificationEmailExpiresAt: Date.now() + 24 * 60 * 60 * 1000, // 24hours || 1day
           });
         } else {
           newUser = await Student.create({
@@ -103,8 +105,8 @@ const mutationFields = {
             lastname: args.lastname,
             email: args.email,
             password: hashedPassword,
-            verificationPasswordToken: verificationToken,
-            verificationPasswordExpiresAt: Date.now() + 24 * 60 * 60 * 1000, // 24hours || 1day
+            verificationEmailToken: verificationToken,
+            verificationEmailExpiresAt: Date.now() + 10 * 60 * 1000, // 10 minutes
           });
         }
 
@@ -155,14 +157,14 @@ const mutationFields = {
         if (type === "Teacher") {
           verifiedUser = await Teacher.findOne({
             _id: args.userId,
-            verificationPasswordToken: args.code,
-            verificationPasswordExpiresAt: { $gt: Date.now() },
+            verificationEmailToken: args.code,
+            verificationEmailExpiresAt: { $gt: Date.now() },
           });
         } else if (type === "Student") {
           verifiedUser = await Student.findOne({
             _id: args.userId,
-            verificationPasswordToken: args.code,
-            verificationPasswordExpiresAt: { $gt: Date.now() },
+            verificationEmailToken: args.code,
+            verificationEmailExpiresAt: { $gt: Date.now() },
           });
         }
         if (!verifiedUser)
@@ -198,8 +200,8 @@ const mutationFields = {
       // set the user to active
       try {
         verifiedUser.isActive = true;
-        verifiedUser.verificationPasswordToken = undefined;
-        verifiedUser.verificationPasswordExpiresAt = undefined;
+        verifiedUser.verificationEmailToken = undefined;
+        verifiedUser.verificationEmailExpiresAt = undefined;
         console.log(verifiedUser);
         verifiedUser.save();
       } catch (err) {
@@ -351,12 +353,11 @@ const mutationFields = {
     },
 
     async resolve(parent, args, { req, res }) {
-      // put this in a function
       const { isAuth, user } = req.raw;
-      if (!isAuth || !user) return { message: "You are already logged out" };
-
-      const cookies = req.raw.cookies;
-      if (!cookies?.token) return { message: "You are already logged out" };
+      if (!isAuth || !user) {
+        const cookies = req.raw.cookies;
+        if (!cookies?.token) return { message: "You are already logged out" };
+      }
 
       res.clearCookie("token", {
         httpOnly: true,
@@ -365,6 +366,143 @@ const mutationFields = {
       });
 
       return { message: "You logged out successfully" };
+    },
+  },
+
+  forgetPassword: {
+    type: forgetPasswordType,
+    args: {
+      email: { type: GraphQLString },
+      type: {
+        type: new GraphQLEnumType({
+          name: "forgetPasswordType",
+          values: {
+            student: { value: "Student" },
+            teacher: { value: "Teacher" },
+          },
+        }),
+      },
+    },
+
+    async resolve(parent, args, { req, res }) {
+      const type = args.type;
+
+      let user;
+
+      try {
+        user =
+          type === "Student"
+            ? await Student.findOne({ email: args.email })
+            : await Teacher.findOne({ email: args.email });
+
+        console.log("user:", user);
+      } catch (err) {
+        throw new GraphQLError(
+          "Sorry we have a problem connecting to the database, Please try again later!",
+          {
+            extensions: {
+              http: { status: 500 },
+            },
+          }
+        );
+      }
+
+      if (!user)
+        throw new GraphQLError("Sorry,this user couldn't be found!", {
+          extensions: {
+            code: "NOT FOUND",
+            http: { status: 404 },
+          },
+        });
+
+      if (!user.isActive)
+        throw new GraphQLError(
+          "Your account is not active, verify your email or contact us"
+        );
+
+      const token = otpGenerator.generate(6, {
+        specialChars: false,
+      });
+
+      user.resetPasswordToken = token;
+      user.resetPasswordExpiresAt = Date.now() + 10 * 60 * 1000;
+
+      try {
+        user.save();
+
+        // sending reset password email
+        // SendPasswordResetEmail(
+        //   (userEmail = args.email),
+        //   (username = user.firstname),
+        //   (subject = "Password Reset"),
+        //   token
+        // );
+
+        return { message: "Password reset email was sent successfully" };
+      } catch (error) {
+        throw new GraphQLError("An error occured, Please try again!");
+      }
+    },
+  },
+  resetPassword: {
+    type: resetPasswordType,
+    args: {
+      email: { type: GraphQLString },
+      code: { type: GraphQLString },
+      type: {
+        type: new GraphQLEnumType({
+          name: "resetPasswordType",
+          values: {
+            student: { value: "Student" },
+            teacher: { value: "Teacher" },
+          },
+        }),
+      },
+      newPassword: { type: GraphQLString },
+    },
+    async resolve(parent, args) {
+      // check if autherithes already
+
+      const type = args.type;
+
+      let verifiedUser;
+      try {
+        if (type === "Teacher") {
+          verifiedUser = await Teacher.findOne({
+            email: args.email,
+            resetPasswordToken: args.code,
+            resetPasswordExpiresAt: { $gt: Date.now() },
+          });
+        } else if (type === "Student") {
+          verifiedUser = await Student.findOne({
+            email: args.email,
+            resetPasswordToken: args.code,
+            resetPasswordExpiresAt: { $gt: Date.now() },
+          });
+        }
+        if (!verifiedUser)
+          throw new GraphQLError("Sorry,this user couldn't be found!", {
+            extensions: {
+              code: "NOT FOUND",
+              http: { status: 404 },
+            },
+          });
+      } catch (err) {
+        throw new GraphQLError(err);
+      }
+
+      if (verifiedUser) {
+        const hashedPassword = await bcrypt.hash(args.newPassword, 10);
+
+        verifiedUser.password = hashedPassword;
+        verifiedUser.resetPasswordToken = undefined;
+        verifiedUser.resetPasswordExpiresAt = undefined;
+        verifiedUser.save();
+      }
+
+      return {
+        message: "Your password was reset successfully, you can login now",
+      };
     },
   },
 };
