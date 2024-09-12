@@ -4,25 +4,37 @@ const {
   GraphQLString,
   GraphQLNonNull,
   GraphQLEnumType,
+  GraphQLError,
 } = require("graphql");
 const { LessonType } = require("./Types");
 const Lesson = require("../models/Lesson");
 const Teacher = require("../models/Teacher");
 const Teacher_Lesson = require("../models/Teacher_Lesson");
 const Student_Lesson = require("../models/Student_Lesson");
+const { mongoose } = require("mongoose");
+const { idCheck, errorHandler } = require("../utils/errorHandler");
 
 const queryFields = {
   Lessons: {
     type: GraphQLList(LessonType),
     resolve(parent, args) {
-      return Lesson.find({});
+      try {
+        return Lesson.find({});
+      } catch (err) {
+        errorHandler(err);
+      }
     },
   },
   lesson: {
     type: LessonType,
     args: { id: { type: GraphQLID } },
     resolve(parent, args) {
-      return Lesson.findById(args.id);
+      try {
+        idCheck(args.id);
+        return Lesson.findById(args.id);
+      } catch (err) {
+        errorHandler(err);
+      }
     },
   },
 };
@@ -53,13 +65,17 @@ const mutationFields = {
       description: { type: GraphQLString },
     },
     resolve(parent, args) {
-      const lesson = new Lesson({
-        material: args.material,
-        title: args.title,
-        description: args.description,
-      });
+      try {
+        const lesson = new Lesson({
+          material: args.material,
+          title: args.title,
+          description: args.description,
+        });
 
-      return lesson.save();
+        return lesson.save();
+      } catch (err) {
+        errorHandler(err);
+      }
     },
   },
 
@@ -90,17 +106,22 @@ const mutationFields = {
     },
 
     resolve(parent, args) {
-      return Lesson.findByIdAndUpdate(
-        args.id,
-        {
-          $set: {
-            material: args.material,
-            title: args.title,
-            description: args.description,
+      try {
+        idCheck(args.id);
+        return Lesson.findByIdAndUpdate(
+          args.id,
+          {
+            $set: {
+              material: args.material,
+              title: args.title,
+              description: args.description,
+            },
           },
-        },
-        { new: true }
-      );
+          { new: true }
+        );
+      } catch (err) {
+        errorHandler(err);
+      }
     },
   },
 
@@ -108,21 +129,35 @@ const mutationFields = {
     type: LessonType,
     args: { id: { type: GraphQLID } },
     async resolve(parent, args) {
-      // delete the lesson
-      const lesson = await Lesson.findByIdAndDelete(args.id);
+      try {
+        idCheck(args.id);
+        if (!mongoose.isValidObjectId(args.id))
+          throw new GraphQLError("This id is not valid");
 
-      // get all teacher lessons associated with it
-      const teacherLesson = await Teacher_Lesson.find({ lessonId: args.id });
+        // delete the lesson
+        const lesson = await Lesson.findByIdAndDelete(args.id);
+        console.log(lesson);
 
-      // loop through each teacher lesson and delete the associated sutdent lesson
-      [...teacherLesson].forEach(
-        async (lesson) =>
-          await Student_Lesson.deleteMany({ teacherLessonId: lesson.id })
-      );
+        if (!lesson) throw new GraphQLError("This lesson wasn't found!");
 
-      // delete the teacher lesson
-      await Teacher_Lesson.deleteMany({ lessonId: args.id });
-      return lesson;
+        // get all teacher lessons associated with it
+        const teacherLesson = await Teacher_Lesson.find({ lessonId: args.id });
+
+        if (teacherLesson) {
+          // loop through each teacher lesson and delete the associated sutdent lesson
+          [...teacherLesson].forEach(
+            async (lesson) =>
+              await Student_Lesson.deleteMany({ teacherLessonId: lesson.id })
+          );
+
+          // delete the teacher lesson
+          await Teacher_Lesson.deleteMany({ lessonId: args.id });
+          return lesson;
+        }
+        return lesson;
+      } catch (err) {
+        errorHandler(arr);
+      }
     },
   },
 };

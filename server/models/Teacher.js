@@ -19,6 +19,8 @@ const TeacherSchema = mongoose.Schema(
       default: "Teacher",
     },
     about_me: String,
+    education: [String],
+    experience: Number,
     classes_num: {
       type: Number,
       default: 5,

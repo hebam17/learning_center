@@ -1,4 +1,9 @@
-const { GraphQLNonNull, GraphQLID, GraphQLEnumType } = require("graphql");
+const {
+  GraphQLNonNull,
+  GraphQLID,
+  GraphQLEnumType,
+  GraphQLError,
+} = require("graphql");
 const ObjectId = require("mongoose").ObjectId;
 const {
   StudentLessonType,
@@ -8,13 +13,19 @@ const {
 const Student_Lesson = require("../models/Student_Lesson");
 const Teacher = require("../models/Teacher");
 const Teacher_Lesson = require("../models/Teacher_Lesson");
+const { idCheck, errorHandler } = require("../utils/errorHandler");
 
 const queryFields = {
   studentLesson: {
     type: StudentLessonType,
     args: { id: { type: GraphQLID } },
     resolve(parent, args) {
-      return Student_Lesson.findById(args.id);
+      try {
+        idCheck(args.id);
+        return Student_Lesson.findById(args.id);
+      } catch (err) {
+        errorHandler(err);
+      }
     },
   },
 };
@@ -38,39 +49,45 @@ const mutationFields = {
     },
 
     async resolve(parent, args) {
-      const teacherLesson = Teacher_Lesson.findById(args.teacherLessonId);
-      if (teacherLesson.is_full)
-        throw new Error("The class no longer accept students!");
+      try {
+        idCheck(args.teacherLessonId);
+        idCheck(args.studentId);
 
-      const existStudentLesson = await Student_Lesson.findOne({
-        teacherLessonId: args.teacherLessonId,
-        studentId: args.studentId,
-      });
+        const teacherLesson = Teacher_Lesson.findById(args.teacherLessonId);
+        if (!teacherLesson)
+          throw new GraphQLError("This lesson was not found!", {
+            extensions: {
+              code: "NOT FOUND",
+              http: { status: 404 },
+            },
+          });
 
-      console.log("existStudentLesson:", existStudentLesson);
-      if (existStudentLesson)
-        throw new Error("You already enrolled in this class!");
+        if (teacherLesson?.is_full)
+          throw new GraphQLError("This class is no longer accepts students!");
 
-      const studentLesson = new Student_Lesson({
-        teacherLessonId: args.teacherLessonId,
-        studentId: args.studentId,
-        lesson_status: args.lesson_status,
-      });
+        const existStudentLesson = await Student_Lesson.findOne({
+          teacherLessonId: args.teacherLessonId,
+          studentId: args.studentId,
+        });
 
-      studentLesson.save().catch((err) => {
-        return new Error(err.message);
-      });
+        if (existStudentLesson)
+          throw new GraphQLError("You already enrolled in this class!");
 
-      // add the student id to the Teacher_Lesson collection
-      const teacherLesson2 = await Teacher_Lesson.findByIdAndUpdate(
-        args.teacherLessonId,
-        {
+        const studentLesson = new Student_Lesson({
+          teacherLessonId: args.teacherLessonId,
+          studentId: args.studentId,
+          lesson_status: args.lesson_status,
+        });
+        studentLesson.save();
+        // add the student id to the Teacher_Lesson collection
+        await Teacher_Lesson.findByIdAndUpdate(args.teacherLessonId, {
           $addToSet: { students: args.studentId },
           $inc: { students_num: 1 },
-        }
-      );
-      console.log("teacherLesson2:", teacherLesson2);
-      return studentLesson;
+        });
+        return studentLesson;
+      } catch (err) {
+        errorHandler(err);
+      }
     },
   },
 
@@ -79,16 +96,29 @@ const mutationFields = {
     args: { id: { type: GraphQLID } },
 
     async resolve(parent, args) {
-      // delete the student lesson
-      const studentLesson = await Student_Lesson.findByIdAndDelete(args.id);
+      try {
+        idCheck(args.id);
+        // delete the student lesson
+        const studentLesson = await Student_Lesson.findByIdAndDelete(args.id);
 
-      // remove the student from the teachers lesson list and decrease the students number by 1
-      await Teacher_Lesson.findByIdAndUpdate(studentLesson.teacherLessonId, {
-        $pull: { students: studentLesson.studentId },
-        $inc: { students_num: -1 },
-      });
+        if (!studentLesson)
+          throw new GraphQLError("You are not enrolled in this class", {
+            extensions: {
+              code: "UNAUTHORIZED",
+              http: { status: 403 },
+            },
+          });
 
-      return studentLesson;
+        // remove the student from the teachers lesson list and decrease the students number by 1
+        await Teacher_Lesson.findByIdAndUpdate(studentLesson.teacherLessonId, {
+          $pull: { students: studentLesson.studentId },
+          $inc: { students_num: -1 },
+        });
+
+        return studentLesson;
+      } catch (err) {
+        errorHandler(err);
+      }
     },
   },
 };

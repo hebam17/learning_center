@@ -40,6 +40,14 @@ const StudentType = new GraphQLObjectType({
     lastname: { type: GraphQLString },
     email: { type: GraphQLString },
     password: { type: GraphQLString },
+    whishlistLessons: {
+      type: GraphQLList(TeacherLessonType),
+      resolve(parent, args) {
+        return parent.whishlist.map((lessonId) =>
+          Teacher_Lesson.findById(lessonId)
+        );
+      },
+    },
     resetPasswordToken: { type: GraphQLString },
     resetPasswordExpiresAt: { type: GraphQLInt },
     verificationPasswordToken: { type: GraphQLString },
@@ -82,10 +90,12 @@ const TeacherLessonType = new GraphQLObjectType({
         return parent.students.map((studentId) => Student.findById(studentId));
       },
     },
-    cost: { type: GraphQLInt },
+    price: { type: GraphQLInt },
+    discount: { type: GraphQLInt },
     rating: { type: GraphQLInt },
     start_date: { type: GraphQLInt },
     week_days: { type: GraphQLList(GraphQLInt) },
+    duration: { type: GraphQLInt },
     type: { type: GraphQLString },
     start_time: { type: GraphQLInt },
     end_time: { type: GraphQLInt },
@@ -136,6 +146,8 @@ const messageType = new GraphQLObjectType({
     message: { type: GraphQLString },
   }),
 });
+
+const updateProfileType = StudentType | TeacherType;
 
 exports.TeacherType = TeacherType;
 exports.StudentType = StudentType;

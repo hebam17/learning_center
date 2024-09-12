@@ -16,7 +16,13 @@ const TeacherLessonSchema = mongoose.Schema(
       ref: "Student",
       default: [],
     },
-    cost: Number,
+    price: Number,
+    discount: {
+      type: Number,
+      min: 0,
+      max: 100,
+      default: 0,
+    },
     rating: {
       type: Number,
       min: 0,
@@ -32,8 +38,10 @@ const TeacherLessonSchema = mongoose.Schema(
       type: String,
       enum: ["Regular", "Revision"],
     },
+    start_date: Date,
     start_time: Date,
     end_time: Date,
+    duration: Number,
     is_full: {
       type: Boolean,
       default: false,

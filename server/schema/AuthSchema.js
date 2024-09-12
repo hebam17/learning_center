@@ -13,6 +13,7 @@ const { RegisterSuccessType, tokenType, messageType } = require("./Types");
 const Student = require("../models/Student");
 const Teacher = require("../models/Teacher");
 const { createToken, createAccessToken } = require("../utils/createToken");
+const { errorHandler, idCheck } = require("../utils/errorHandler");
 // const { SendVerificationEmail } = require("../mail/emails");
 
 const queryFields = {};
@@ -37,45 +38,35 @@ const mutationFields = {
       },
     },
     async resolve(parent, args) {
-      const errors = validation(Object.entries(args));
-      const isValid = Object.keys(errors)?.length === 0;
-      if (!isValid) {
-        throw new GraphQLError(Object.values(errors), {
-          extensions: {
-            code: "BAD REQUEST",
-            http: { status: 400 },
-          },
-        });
-      }
-
-      const isTeacher = args.type === "Teacher";
-
-      let existingUser;
       try {
+        const errors = validation(Object.entries(args));
+        const isValid = Object.keys(errors)?.length === 0;
+        if (!isValid) {
+          throw new GraphQLError(Object.values(errors), {
+            extensions: {
+              code: "BAD REQUEST",
+              http: { status: 400 },
+            },
+          });
+        }
+
+        const isTeacher = args.type === "Teacher";
+
+        let existingUser;
         if (isTeacher) {
           existingUser = await Teacher.findOne({ email: args.email });
         } else if (!isTeacher) {
           existingUser = await Student.findOne({ email: args.email });
         }
-      } catch (err) {
-        throw new GraphQLError(
-          "Sorry we have a problem connecting to the database, Please try again later!",
-          {
-            extensions: {
-              http: { status: 500 },
-            },
-          }
-        );
-      }
-      if (existingUser) {
-        throw new GraphQLError("This email is already exist", {
-          extensions: {
-            http: { status: 400 },
-          },
-        });
-      }
 
-      try {
+        if (existingUser) {
+          throw new GraphQLError("This user is already exist", {
+            extensions: {
+              http: { status: 400 },
+            },
+          });
+        }
+
         const hashedPassword = await bcrypt.hash(args.password, 10);
         // Create the verification token
         const verificationToken = otpGenerator.generate(6, {
@@ -113,15 +104,7 @@ const mutationFields = {
 
         return { message: "Registered successfully!", userId: newUser._id };
       } catch (err) {
-        console.log(err);
-        throw new GraphQLError(
-          "Sorry we have a problem connecting to the database, Please try again later!",
-          {
-            extensions: {
-              http: { status: 500 },
-            },
-          }
-        );
+        errorHandler(err);
       }
     },
   },
@@ -142,11 +125,13 @@ const mutationFields = {
       code: { type: GraphQLString },
     },
     async resolve(parent, args, { req, res }) {
-      // get whether it's a student or a teacher
-      const type = args.type;
-
-      let verifiedUser;
       try {
+        idCheck(args.userId);
+
+        // get whether it's a student or a teacher
+        const type = args.type;
+
+        let verifiedUser;
         if (type === "Teacher") {
           verifiedUser = await Teacher.findOne({
             _id: args.userId,
@@ -167,49 +152,39 @@ const mutationFields = {
               http: { status: 404 },
             },
           });
-      } catch (err) {
-        throw new GraphQLError(err);
-      }
-      if (verifiedUser.isActive === true)
-        throw new GraphQLError("You are already verified, you can login", {
-          extensions: {
-            code: "BAD REQUEST",
-            http: { status: 400 },
-          },
+
+        if (verifiedUser.isActive === true)
+          throw new GraphQLError("You are already verified, you can login", {
+            extensions: {
+              code: "BAD REQUEST",
+              http: { status: 400 },
+            },
+          });
+
+        const { accessToken, refreshToken } = createToken(
+          verifiedUser,
+          args.type
+        );
+        // set the http only cookie to send the refresh token
+        res.cookie("token", refreshToken, {
+          sameSite: "none",
+          htmlOnly: true,
+          secure: true,
+          maxAge: 7 * 24 * 60 * 60 * 1000,
         });
 
-      const { accessToken, refreshToken } = createToken(
-        verifiedUser,
-        args.type
-      );
-      // set the http only cookie to send the refresh token
-      res.cookie("token", refreshToken, {
-        sameSite: "none",
-        htmlOnly: true,
-        secure: true,
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-      });
-
-      // set the user to active
-      try {
+        // set the user to active
         verifiedUser.isActive = true;
         verifiedUser.verificationEmailToken = undefined;
         verifiedUser.verificationEmailExpiresAt = undefined;
         console.log(verifiedUser);
         verifiedUser.save();
-      } catch (err) {
-        throw new GraphQLError(
-          "Sorry we have a problem connecting to the database, Please try again later!",
-          {
-            extensions: {
-              http: { status: 500 },
-            },
-          }
-        );
-      }
 
-      // send the access token as a response to the client
-      return { accessToken };
+        // send the access token as a response to the client
+        return { accessToken };
+      } catch (err) {
+        errorHandler(err);
+      }
     },
   },
 
@@ -229,54 +204,62 @@ const mutationFields = {
       },
     },
     async resolve(parent, args, { req, res }) {
-      const { email, password, type } = args;
-
-      const { isAuth, user: authUser } = req.raw;
-
-      if (isAuth && authUser) {
-        throw new GraphQLError("You are already logged in!");
-      }
-
-      if (!email?.trim() && password?.trim()) {
-        throw new GraphQLError("Please provide all required fields");
-      }
-      let user;
       try {
+        const { email, password, type } = args;
+
+        if (!email?.trim() || !password?.trim() || !type) {
+          throw new GraphQLError("Please provide all required fields");
+        }
+
+        const { isAuth, user: authUser } = req.raw;
+
+        if (isAuth && authUser) {
+          throw new GraphQLError("You are already logged in!");
+        }
+
+        const errors = validation(Object.entries(args));
+        const isValid = Object.keys(errors)?.length === 0;
+
+        if (!isValid) {
+          throw new GraphQLError(Object.values(errors), {
+            extensions: {
+              code: "BAD REQUEST",
+              http: { status: 400 },
+            },
+          });
+        }
+
+        let user;
         user =
           type === "Student"
             ? await Student.findOne({ email })
             : await Teacher.findOne({ email });
-      } catch (err) {
-        throw new GraphQLError(
-          "Sorry we have a problem connecting to the database, Please try again later!",
-          {
+
+        if (!user)
+          throw new GraphQLError("User not found!", {
             extensions: {
-              http: { status: 500 },
+              http: { status: 404 },
             },
-          }
-        );
-      }
-      if (!user)
-        throw new GraphQLError("User is not found!", {
-          extensions: {
-            http: { status: 404 },
-          },
+          });
+
+        const isValidPassword = await bcrypt.compare(password, user.password);
+
+        if (!isValidPassword)
+          throw new GraphQLError("email or password is Invalid");
+
+        const { accessToken, refreshToken } = createToken(user, type);
+
+        res.cookie("token", refreshToken, {
+          sameSite: "none",
+          secure: true,
+          httpOnly: true,
+          maxAge: 7 * 24 * 60 * 60 * 1000, // cookie expire in 7days like the refresh token
         });
 
-      const isValid = await bcrypt.compare(password, user.password);
-
-      if (!isValid) throw new GraphQLError("email or password is Invalid");
-
-      const { accessToken, refreshToken } = createToken(user, type);
-
-      res.cookie("token", refreshToken, {
-        sameSite: "none",
-        secure: true,
-        httpOnly: true,
-        maxAge: 7 * 24 * 60 * 60 * 1000, // cookie expire in 7days like the refresh token
-      });
-
-      return { accessToken };
+        return { accessToken };
+      } catch (err) {
+        errorHandler(err);
+      }
     },
   },
 
@@ -284,48 +267,43 @@ const mutationFields = {
     type: tokenType,
 
     async resolve(parent, args, { req, res }) {
-      const cookies = req.raw.cookies;
-      if (!cookies?.token)
-        throw new GraphQLError("You are unauthorized", {
-          extensions: {
-            http: { status: 401 },
-          },
-        });
-
-      const refreshToken = cookies.token;
-
       try {
+        const cookies = req.raw.cookies;
+        if (!cookies?.token)
+          throw new GraphQLError("You are unauthorized", {
+            extensions: {
+              http: { status: 401 },
+            },
+          });
+
+        const refreshToken = cookies.token;
+
         const userData = jwt.verify(
           refreshToken,
           process.env.REFRESH_TOKEN_SECRET
         );
 
-        try {
-          user = userData.roles.includes("Student")
-            ? await Student.findById(userData.userId)
-            : await Teacher.findById(userData.userId);
-        } catch (err) {
-          throw new GraphQLError(
-            "Sorry we have a problem connecting to the database, Please try again later!",
-            {
-              extensions: {
-                http: { status: 500 },
-              },
-            }
-          );
+        const user = userData.roles.includes("Student")
+          ? await Student.findById(userData.userId)
+          : await Teacher.findById(userData.userId);
+
+        if (user) {
+          const type = userData.roles.includes("Student")
+            ? "Student"
+            : "Teacher";
+
+          const { accessToken } = createAccessToken(user, type);
+          return { accessToken };
         }
 
-        const type = userData.roles.includes("Student") ? "Student" : "Teacher";
-
-        const { accessToken } = createAccessToken(user, type);
-        return { accessToken };
-      } catch (err) {
         throw new GraphQLError("You are unauthorized", {
           extensions: {
             code: "FORBIDDEN",
             http: { status: 403 },
           },
         });
+      } catch (err) {
+        errorHandler(err);
       }
     },
   },
@@ -346,19 +324,24 @@ const mutationFields = {
     },
 
     async resolve(parent, args, { req, res }) {
-      const { isAuth, user } = req.raw;
-      if (!isAuth || !user) {
-        const cookies = req.raw.cookies;
-        if (!cookies?.token) return { message: "You are already logged out" };
+      try {
+        const { isAuth, user } = req.raw;
+        console.log("user:", user);
+        if (!isAuth || !user) {
+          const cookies = req.raw.cookies;
+          if (!cookies?.token) return { message: "You are already logged out" };
+        }
+
+        res.clearCookie("token", {
+          httpOnly: true,
+          sameSite: "none",
+          secure: true,
+        });
+
+        return { message: "You logged out successfully" };
+      } catch (err) {
+        errorHandler(err);
       }
-
-      res.clearCookie("token", {
-        httpOnly: true,
-        sameSite: "none",
-        secure: true,
-      });
-
-      return { message: "You logged out successfully" };
     },
   },
 
@@ -378,49 +361,49 @@ const mutationFields = {
     },
 
     async resolve(parent, args, { req, res }) {
-      const type = args.type;
-
-      let user;
-
       try {
+        const type = args.type;
         user =
           type === "Student"
             ? await Student.findOne({ email: args.email })
             : await Teacher.findOne({ email: args.email });
 
-        console.log("user:", user);
-      } catch (err) {
-        throw new GraphQLError(
-          "Sorry we have a problem connecting to the database, Please try again later!",
-          {
-            extensions: {
-              http: { status: 500 },
-            },
-          }
-        );
-      }
+        // } catch (err) {
+        //   throw new GraphQLError(
+        //     "Sorry we have a problem connecting to the database, Please try again later!",
+        //     {
+        //       extensions: {
+        //         http: { status: 500 },
+        //       },
+        //     }
+        //   );
+        // }
 
-      if (!user)
-        throw new GraphQLError("Sorry,this user couldn't be found!", {
-          extensions: {
-            code: "NOT FOUND",
-            http: { status: 404 },
-          },
+        if (!user)
+          throw new GraphQLError("Sorry,this user couldn't be found!", {
+            extensions: {
+              code: "NOT FOUND",
+              http: { status: 404 },
+            },
+          });
+
+        if (!user.isActive)
+          throw new GraphQLError(
+            "Your account is not active, verify your email or contact us",
+            {
+              extensions: {
+                http: { status: 401 },
+              },
+            }
+          );
+
+        const token = otpGenerator.generate(6, {
+          specialChars: false,
         });
 
-      if (!user.isActive)
-        throw new GraphQLError(
-          "Your account is not active, verify your email or contact us"
-        );
+        user.resetPasswordToken = token;
+        user.resetPasswordExpiresAt = Date.now() + 10 * 60 * 1000;
 
-      const token = otpGenerator.generate(6, {
-        specialChars: false,
-      });
-
-      user.resetPasswordToken = token;
-      user.resetPasswordExpiresAt = Date.now() + 10 * 60 * 1000;
-
-      try {
         user.save();
 
         // sending reset password email
@@ -454,12 +437,10 @@ const mutationFields = {
       newPassword: { type: GraphQLString },
     },
     async resolve(parent, args) {
-      // check if autherithes already
-
-      const type = args.type;
-
-      let verifiedUser;
       try {
+        const type = args.type;
+
+        let verifiedUser;
         if (type === "Teacher") {
           verifiedUser = await Teacher.findOne({
             email: args.email,
@@ -480,22 +461,22 @@ const mutationFields = {
               http: { status: 404 },
             },
           });
+
+        if (verifiedUser) {
+          const hashedPassword = await bcrypt.hash(args.newPassword, 10);
+
+          verifiedUser.password = hashedPassword;
+          verifiedUser.resetPasswordToken = undefined;
+          verifiedUser.resetPasswordExpiresAt = undefined;
+          verifiedUser.save();
+        }
+
+        return {
+          message: "Your password was reset successfully, you can login now",
+        };
       } catch (err) {
-        throw new GraphQLError(err);
+        errorHandler(err);
       }
-
-      if (verifiedUser) {
-        const hashedPassword = await bcrypt.hash(args.newPassword, 10);
-
-        verifiedUser.password = hashedPassword;
-        verifiedUser.resetPasswordToken = undefined;
-        verifiedUser.resetPasswordExpiresAt = undefined;
-        verifiedUser.save();
-      }
-
-      return {
-        message: "Your password was reset successfully, you can login now",
-      };
     },
   },
 };
