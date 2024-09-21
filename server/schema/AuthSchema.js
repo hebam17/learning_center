@@ -16,7 +16,52 @@ const { createToken, createAccessToken } = require("../utils/createToken");
 const { errorHandler, idCheck } = require("../utils/errorHandler");
 // const { SendVerificationEmail } = require("../mail/emails");
 
-const queryFields = {};
+const queryFields = {
+  refresh: {
+    type: tokenType,
+
+    async resolve(parent, args, { req, res }) {
+      try {
+        const cookies = req.raw.cookies;
+        if (!cookies?.token)
+          throw new GraphQLError("You are unauthorized", {
+            extensions: {
+              http: { status: 401 },
+            },
+          });
+
+        const refreshToken = cookies.token;
+
+        const userData = jwt.verify(
+          refreshToken,
+          process.env.REFRESH_TOKEN_SECRET
+        );
+
+        const user = userData.roles.includes("Student")
+          ? await Student.findById(userData.userId)
+          : await Teacher.findById(userData.userId);
+
+        if (user) {
+          const type = userData.roles.includes("Student")
+            ? "Student"
+            : "Teacher";
+
+          const { accessToken } = createAccessToken(user, type);
+          return { accessToken };
+        }
+
+        throw new GraphQLError("You are unauthorized", {
+          extensions: {
+            code: "FORBIDDEN",
+            http: { status: 403 },
+          },
+        });
+      } catch (err) {
+        errorHandler(err);
+      }
+    },
+  },
+};
 
 const mutationFields = {
   register: {
@@ -257,51 +302,6 @@ const mutationFields = {
         });
 
         return { accessToken };
-      } catch (err) {
-        errorHandler(err);
-      }
-    },
-  },
-
-  refresh: {
-    type: tokenType,
-
-    async resolve(parent, args, { req, res }) {
-      try {
-        const cookies = req.raw.cookies;
-        if (!cookies?.token)
-          throw new GraphQLError("You are unauthorized", {
-            extensions: {
-              http: { status: 401 },
-            },
-          });
-
-        const refreshToken = cookies.token;
-
-        const userData = jwt.verify(
-          refreshToken,
-          process.env.REFRESH_TOKEN_SECRET
-        );
-
-        const user = userData.roles.includes("Student")
-          ? await Student.findById(userData.userId)
-          : await Teacher.findById(userData.userId);
-
-        if (user) {
-          const type = userData.roles.includes("Student")
-            ? "Student"
-            : "Teacher";
-
-          const { accessToken } = createAccessToken(user, type);
-          return { accessToken };
-        }
-
-        throw new GraphQLError("You are unauthorized", {
-          extensions: {
-            code: "FORBIDDEN",
-            http: { status: 403 },
-          },
-        });
       } catch (err) {
         errorHandler(err);
       }

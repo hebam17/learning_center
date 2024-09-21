@@ -8,18 +8,10 @@ const expressPlayground =
 const schema = require("./schema");
 const cookieParser = require("cookie-parser");
 const { Auth } = require("./middleware/userAuth");
+
 const app = express();
-app.use(express.json());
-app.use(cookieParser());
 
-app.use(
-  cors({
-    credentials: true,
-    origin: process.env.CLIENT_URL,
-  })
-);
-
-app.disable("x-powered-by");
+console.log(process.env.CLIENT_URL);
 
 // connect to mongodb
 mongoose
@@ -29,6 +21,17 @@ mongoose
     console.log("Error:", error);
     process.exit(1);
   });
+
+app.use(
+  cors({
+    credentials: true,
+    origin: process.env.CLIENT_URL,
+  })
+);
+app.disable("x-powered-by");
+
+app.use(express.json());
+app.use(cookieParser());
 
 // invoke the auth middleware
 app.use(Auth);
