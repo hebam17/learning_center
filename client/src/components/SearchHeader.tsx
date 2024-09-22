@@ -1,3 +1,11 @@
+import Logo from "./Logo";
+
 export default function SearchHeader() {
-  return <div>SearchHeader</div>;
+  return (
+    <div>
+      {/* LARGE SCREEN NAVIGATION */}
+
+      <div>Search header</div>
+    </div>
+  );
 }

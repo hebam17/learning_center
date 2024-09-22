@@ -1,5 +1,4 @@
 /* eslint-disable */
-import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -420,11 +419,3 @@ export enum VerifyType {
   Student = 'student',
   Teacher = 'teacher'
 }
-
-export type GetAllStudentsQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type GetAllStudentsQuery = { __typename?: 'RootQueryType', students?: Array<{ __typename?: 'Student', id?: string | null, firstname?: string | null, email?: string | null } | null> | null };
-
-
-export const GetAllStudentsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetAllStudents"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"students"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"firstname"}},{"kind":"Field","name":{"kind":"Name","value":"email"}}]}}]}}]} as unknown as DocumentNode<GetAllStudentsQuery, GetAllStudentsQueryVariables>;

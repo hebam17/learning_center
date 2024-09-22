@@ -11,6 +11,14 @@
   }
 
   .active-screen-link {
-    @apply border-t-2 border-primary-500 text-white;
+    @apply border-primary-500 text-white;
+  }
+
+  .mobile-link {
+    @apply inline-block p-4;
+  }
+
+  .active-mobile-link {
+    @apply text-primary-500 ml-2;
   }
 }

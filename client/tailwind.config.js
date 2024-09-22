@@ -8,6 +8,9 @@ export default {
         "primary-400": "#FF855E",
         "secodary-900": "#111033",
       },
+      borderWidth: {
+        1: "1px",
+      },
     },
   },
   plugins: [],
