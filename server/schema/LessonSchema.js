@@ -15,7 +15,7 @@ const { mongoose } = require("mongoose");
 const { idCheck, errorHandler } = require("../utils/errorHandler");
 
 const queryFields = {
-  Lessons: {
+  lessons: {
     type: GraphQLList(LessonType),
     resolve(parent, args) {
       try {

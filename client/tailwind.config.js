@@ -4,11 +4,15 @@ export default {
   theme: {
     extend: {
       colors: {
-        "primary-500": "#FF6636",
+        "primary-100": "#FFEEE8",
         "primary-400": "#FF855E",
-        "secodary-900": "#111033",
+        "primary-500": "#FF6636",
+        "secondary-900": "#111033",
       },
       borderWidth: {
+        1: "1px",
+      },
+      outlineWidth: {
         1: "1px",
       },
     },

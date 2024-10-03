@@ -4,6 +4,7 @@ import HomePage from "./pages/HomePage";
 import ErrorElement from "./components/ErrorElement";
 import Layout from "./pages/Layout";
 import { Lessons } from "./pages/Lessons";
+import Lesson from "./pages/Lesson";
 
 function App() {
   const router = createBrowserRouter([
@@ -18,6 +19,12 @@ function App() {
         {
           path: "/lessons",
           element: <Lessons />,
+          children: [
+            {
+              path: ":lessonId",
+              element: <Lesson />,
+            },
+          ],
         },
       ],
     },

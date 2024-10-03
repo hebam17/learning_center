@@ -2,7 +2,12 @@
 *::after,
 *::before {
   box-sizing: border-box;
+}
+
+body {
   font-family: "Inter", sans-serif;
+  overflow-x: hidden;
+  transition: all 2s;
 }
 
 @layer components {
@@ -21,4 +26,60 @@
   .active-mobile-link {
     @apply text-primary-500 ml-2;
   }
+}
+
+/* The lesson select custom element */
+.custom-select {
+  min-width: 180px;
+  max-width: 350px;
+  /* z-index: -1; */
+  cursor: pointer;
+}
+
+.custom-select select {
+  @apply w-full py-2 px-2 bg-white border-1 border-gray-200 rounded-md text-gray-600 text-base appearance-none;
+}
+
+/* The two small arrows */
+.custom-select::after,
+.custom-select::before {
+  --size: 0.3rem;
+  position: absolute;
+  content: "";
+  right: 1rem;
+  pointer-events: none;
+}
+
+.custom-select::before {
+  border-left: var(--size) solid transparent;
+  border-right: var(--size) solid transparent;
+  border-bottom: var(--size) solid black;
+  top: 40%;
+}
+
+.custom-select::after {
+  border-left: var(--size) solid transparent;
+  border-right: var(--size) solid transparent;
+  border-top: var(--size) solid black;
+  top: 55%;
+}
+
+/* datalist input */
+
+/* The magnifying glass placement*/
+#search {
+  @apply absolute right-2 top-2;
+  pointer-events: none;
+}
+
+.react-datalist-input__textbox {
+  @apply p-2 pr-4 text-base rounded-md text-gray-600 transition-all duration-500;
+}
+
+.react-datalist-input__label {
+  display: none;
+}
+
+.react-datalist-input__listbox-option:focus {
+  @apply bg-gray-900 text-white outline-none;
 }

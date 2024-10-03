@@ -24,10 +24,10 @@ const queryFields = {
           {},
           {
             password: 0,
-            resetPasswordToken,
-            resetPasswordExpiresAt,
-            verificationPasswordToken,
-            verificationPasswordExpiresAt,
+            resetPasswordToken: 0,
+            resetPasswordExpiresAt: 0,
+            verificationPasswordToken: 0,
+            verificationPasswordExpiresAt: 0,
           }
         );
       } catch (error) {
@@ -44,10 +44,10 @@ const queryFields = {
         idCheck(args.id);
         return Teacher.findById(args.id, {
           password: 0,
-          resetPasswordToken,
-          resetPasswordExpiresAt,
-          verificationPasswordToken,
-          verificationPasswordExpiresAt,
+          resetPasswordToken: 0,
+          resetPasswordExpiresAt: 0,
+          verificationPasswordToken: 0,
+          verificationPasswordExpiresAt: 0,
         });
       } catch (err) {
         errorHandler(err);

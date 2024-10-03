@@ -1,4 +1,5 @@
 /* eslint-disable */
+import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -223,9 +224,9 @@ export type Register = {
 
 export type RootQueryType = {
   __typename?: 'RootQueryType';
-  Lessons?: Maybe<Array<Maybe<Lesson>>>;
   allTeacherLessons?: Maybe<Array<Maybe<TeacherLesson>>>;
   lesson?: Maybe<Lesson>;
+  lessons?: Maybe<Array<Maybe<Lesson>>>;
   refresh?: Maybe<Token>;
   student?: Maybe<Student>;
   studentLesson?: Maybe<StudentLesson>;
@@ -419,3 +420,17 @@ export enum VerifyType {
   Student = 'student',
   Teacher = 'teacher'
 }
+
+export type GetTeachersQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetTeachersQuery = { __typename?: 'RootQueryType', teachers?: Array<{ __typename?: 'Teacher', id?: string | null, firstname?: string | null, lastname?: string | null, email?: string | null, role?: string | null, about_me?: string | null, salary?: number | null, isActive?: boolean | null } | null> | null };
+
+export type GetLessonsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetLessonsQuery = { __typename?: 'RootQueryType', lessons?: Array<{ __typename?: 'Lesson', id?: string | null, material?: string | null, title?: string | null, description?: string | null } | null> | null };
+
+
+export const GetTeachersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getTeachers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"teachers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"firstname"}},{"kind":"Field","name":{"kind":"Name","value":"lastname"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"role"}},{"kind":"Field","name":{"kind":"Name","value":"about_me"}},{"kind":"Field","name":{"kind":"Name","value":"salary"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}}]}}]}}]} as unknown as DocumentNode<GetTeachersQuery, GetTeachersQueryVariables>;
+export const GetLessonsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getLessons"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"lessons"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"material"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}}]}}]} as unknown as DocumentNode<GetLessonsQuery, GetLessonsQueryVariables>;

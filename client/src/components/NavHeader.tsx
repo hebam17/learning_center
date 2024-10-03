@@ -6,6 +6,8 @@ export default function NavHeader() {
   const screenLinkClass = (isActive: boolean): string =>
     isActive ? "screen-link active-screen-link" : "screen-link";
 
+  const isLoggedIn: boolean = false;
+
   const mobileLinkClass = (isActive: boolean): string =>
     isActive ? "mobile-link active-mobile-link" : "mobile-link";
 
@@ -13,8 +15,8 @@ export default function NavHeader() {
 
   return (
     <nav className="relative">
-      {/* LARGE SCREEN NAVIGATION */}
-      <div className="large-nav py-0 px-4 lg:flex space-between bg-gray-900 text-gray-400 font-semibold text-base hidden">
+      {/* LARGE SCREEN NAVIGATION  */}
+      <div className="large-nav py-0 px-4 lg:flex space-between bg-secondary-900 text-gray-400 font-semibold text-base hidden">
         {/* LEFT SIDE LINKS */}
         <div className="large-nav-left flex-grow">
           <NavLink
@@ -50,7 +52,10 @@ export default function NavHeader() {
           >
             Contact
           </NavLink>
+        </div>
 
+        {/* RIGHT SIDE LINKS */}
+        <div className="large-nav-right">
           <NavLink
             to="/new-teacher"
             className={({ isActive }) => screenLinkClass(isActive)}
@@ -58,27 +63,11 @@ export default function NavHeader() {
             Become an Instructor
           </NavLink>
         </div>
-
-        {/* RIGHT SIDE LINKS */}
-        <div className="large-nav-right">
-          <NavLink
-            to="/register"
-            className={({ isActive }) => screenLinkClass(isActive)}
-          >
-            Create Account
-          </NavLink>
-          <NavLink
-            to="/login"
-            className={({ isActive }) => screenLinkClass(isActive)}
-          >
-            Login
-          </NavLink>
-        </div>
       </div>
       {/* ////////////// */}
 
       {/* SMALLER SCREEN NAVIGATION */}
-      <div className="bg-gray-900">
+      <div className="bg-secondary-900">
         {/* toggle bar */}
         <div className="lg:hidden flex items-center justify-between gap-2 p-4 text-white">
           <Logo color="white" />
@@ -105,17 +94,17 @@ export default function NavHeader() {
         {/* THE OVERLAY */}
         {navOpen && (
           <div
-            className="fixed top-0 left-0 bg-black w-screen h-screen opacity-30"
+            className="fixed lg:hidden top-0 left-0 bg-black w-screen h-screen opacity-30 z-10"
             onClick={() => setNavOpen(false)}
           ></div>
         )}
         <div
           className={`${
             !navOpen ? "translate-x-full" : "translate-x-0"
-          } absolute transition-all duration-700 bg-gray-900 w-3/5 top-0 right-0 h-screen`}
+          } absolute transition-all lg:hidden duration-700 bg-secondary-900 w-3/5 top-0 right-0 h-screen overflow-y-scroll z-10`}
         >
           {/* CLOSE BUTTON */}
-          <div className="p-4 border-b-1 border-gray-500 cursor-pointer">
+          <div className="p-4 border-b-1 border-gray-500 cursor-pointer flex justify-end">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -178,30 +167,34 @@ export default function NavHeader() {
               </NavLink>
             </div>
 
-            <div className="border-b-1 border-gray-500">
-              <NavLink
-                to="/new-teacher"
-                className={({ isActive }) => mobileLinkClass(isActive)}
-              >
-                Become an Instructor
-              </NavLink>
-            </div>
-            <div className="border-b-1 border-gray-500">
-              <NavLink
-                to="/register"
-                className={({ isActive }) => mobileLinkClass(isActive)}
-              >
-                Create Account
-              </NavLink>
-            </div>
-            <div className="border-b-1 border-gray-500">
-              <NavLink
-                to="/login"
-                className={({ isActive }) => mobileLinkClass(isActive)}
-              >
-                Login
-              </NavLink>
-            </div>
+            {!isLoggedIn && (
+              <>
+                <div className="border-b-1 border-gray-500">
+                  <NavLink
+                    to="/new-teacher"
+                    className={({ isActive }) => mobileLinkClass(isActive)}
+                  >
+                    Become an Instructor
+                  </NavLink>
+                </div>
+                <div className="border-b-1 border-gray-500">
+                  <NavLink
+                    to="/register"
+                    className={({ isActive }) => mobileLinkClass(isActive)}
+                  >
+                    Create Account
+                  </NavLink>
+                </div>
+                <div className="border-b-1 border-gray-500">
+                  <NavLink
+                    to="/login"
+                    className={({ isActive }) => mobileLinkClass(isActive)}
+                  >
+                    Login
+                  </NavLink>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>
