@@ -83,3 +83,23 @@ body {
 .react-datalist-input__listbox-option:focus {
   @apply bg-gray-900 text-white outline-none;
 }
+
+.main-p {
+  @apply lg:px-24 md:px-20 sm:px-14 px-6;
+}
+
+.footer-big-text {
+  @apply text-white font-semibold;
+}
+
+.footer-small-text {
+  @apply text-sm text-gray-300;
+}
+
+.text-big {
+  @apply lg:text-3xl md:text-2xl text-xl;
+}
+
+.social-icon {
+  @apply p-3 bg-gray-800 inline-block text-white cursor-pointer hover:bg-primary-500 transition-all duration-500 rounded-sm;
+}

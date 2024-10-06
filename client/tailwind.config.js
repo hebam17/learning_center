@@ -8,6 +8,9 @@ export default {
         "primary-400": "#FF855E",
         "primary-500": "#FF6636",
         "secondary-900": "#111033",
+        "gray-300": "#B7BAC7",
+        "gray-800": "#363B47",
+        "gray-900": "#1D2026",
       },
       borderWidth: {
         1: "1px",
