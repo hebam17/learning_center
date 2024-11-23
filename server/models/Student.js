@@ -13,10 +13,9 @@ const StudentSchema = mongoose.Schema(
       type: String,
       require: [true, "please provide a password"],
     },
-    wishlisht: {
+    wishlist: {
       type: [mongoose.Schema.Types.ObjectId],
       ref: "Teacher_Lesson",
-      unique: [true],
     },
     isActive: {
       type: Boolean,

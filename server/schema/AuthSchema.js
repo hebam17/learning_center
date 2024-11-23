@@ -83,9 +83,12 @@ const mutationFields = {
       },
     },
     async resolve(parent, args) {
+      console.log("Register!!!");
       try {
         const errors = validation(Object.entries(args));
         const isValid = Object.keys(errors)?.length === 0;
+        console.log("errors:", errors);
+        console.log("isValid:", isValid);
         if (!isValid) {
           throw new GraphQLError(Object.values(errors), {
             extensions: {
@@ -96,6 +99,7 @@ const mutationFields = {
         }
 
         const isTeacher = args.type === "Teacher";
+        console.log("isTeacher:", isTeacher);
 
         let existingUser;
         if (isTeacher) {
@@ -103,6 +107,7 @@ const mutationFields = {
         } else if (!isTeacher) {
           existingUser = await Student.findOne({ email: args.email });
         }
+        console.log("existingUser:", existingUser);
 
         if (existingUser) {
           throw new GraphQLError("This user is already exist", {
@@ -117,6 +122,7 @@ const mutationFields = {
         const verificationToken = otpGenerator.generate(6, {
           specialChars: false,
         });
+        console.log("verificationToken:", verificationToken);
 
         let newUser;
         if (isTeacher) {
@@ -126,7 +132,7 @@ const mutationFields = {
             email: args.email,
             password: hashedPassword,
             verificationEmailToken: verificationToken,
-            verificationEmailExpiresAt: Date.now() + 24 * 60 * 60 * 1000, // 24hours || 1day
+            verificationEmailExpiresAt: Date.now() + 10 * 60 * 1000, // 10 minutes
           });
         } else {
           newUser = await Student.create({
@@ -137,6 +143,8 @@ const mutationFields = {
             verificationEmailToken: verificationToken,
             verificationEmailExpiresAt: Date.now() + 10 * 60 * 1000, // 10 minutes
           });
+
+          console.log("newUser:", newUser);
         }
 
         // sending a verification email
@@ -149,6 +157,8 @@ const mutationFields = {
 
         return { message: "Registered successfully!", userId: newUser._id };
       } catch (err) {
+        console.log(err);
+
         errorHandler(err);
       }
     },

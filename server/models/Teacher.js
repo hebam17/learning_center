@@ -18,12 +18,21 @@ const TeacherSchema = mongoose.Schema(
       enum: ["Manager", "Teacher", "Assistant_teacher "],
       default: "Teacher",
     },
+    ratings: {
+      type: [Number],
+      default: [],
+    },
+    usersRateId: {
+      type: [mongoose.Schema.ObjectId],
+      ref: "Student",
+      default: [],
+    },
     about_me: String,
     education: [String],
     experience: Number,
-    classes_num: {
+    lessons_num: {
       type: Number,
-      default: 5,
+      default: 0,
     },
     salary: {
       type: Number,
@@ -34,8 +43,8 @@ const TeacherSchema = mongoose.Schema(
     },
     resetPasswordToken: String,
     resetPasswordExpiresAt: Date,
-    verificationPasswordToken: String,
-    verificationPasswordExpiresAt: Date,
+    verificationEmailToken: String,
+    verificationEmailExpiresAt: Date,
   },
   { timestamps: true }
 );

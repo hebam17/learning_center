@@ -15,7 +15,7 @@ export default function Footer() {
             <p className="text-white font-semibold text-big">
               Start learning with 67.1k students around the world.
             </p>
-            <div className="mt-4 flex gap-4">
+            <div className="mt-4 flex gap-4 flex-wrap sm:justify-start justify-center">
               <Link
                 to="/login"
                 className="text-white py-2 px-3 whitespace-nowrap bg-primary-500 text-sm p-2 rounded-sm hover:bg-white hover:text-primary-500 transition-all duration-500 font-semibold"
@@ -53,7 +53,7 @@ export default function Footer() {
 
         {/* Bottom part */}
         <div>
-          <div className="flex justify-start gap-4">
+          <div className="flex justify-start gap-4 flex-wrap">
             <span className="social-icon">
               <svg
                 xmlns="http://www.w3.org/2000/svg"

@@ -13,6 +13,7 @@ const Teacher_Lesson = require("../models/Teacher_Lesson");
 const Student_Lesson = require("../models/Student_Lesson");
 const Student = require("../models/Student");
 const { errorHandler, idCheck } = require("../utils/errorHandler");
+const Teacher = require("../models/Teacher");
 
 const queryFields = {
   teacherLesson: {
@@ -70,6 +71,9 @@ const mutationFields = {
     },
     resolve(parent, args) {
       try {
+        idCheck(args.lessonId);
+        idCheck(args.teacherId);
+
         const teacherLesson = new Teacher_Lesson({
           lessonId: args.lessonId,
           teacherId: args.teacherId,
@@ -87,7 +91,16 @@ const mutationFields = {
           is_full: args.is_full,
         });
 
+        // Increase the teacher's lessons number by 1
+        Teacher.updateOne(
+          { _id: args.teacherId },
+          {
+            $inc: { lessons_num: 1 },
+          }
+        );
+
         teacherLesson.save();
+
         return teacherLesson;
       } catch (err) {
         errorHandler(err);

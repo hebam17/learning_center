@@ -5,6 +5,8 @@ const {
   GraphQLBoolean,
   GraphQLID,
   GraphQLList,
+  GraphQLUnionType,
+  GraphQLFloat,
 } = require("graphql");
 const Lesson = require("../models/Lesson");
 const Teacher = require("../models/Teacher");
@@ -15,12 +17,40 @@ const Teacher_Lesson = require("../models/Teacher_Lesson");
 const TeacherType = new GraphQLObjectType({
   name: "Teacher",
   fields: () => ({
-    id: { type: GraphQLID },
+    id: {
+      type: GraphQLID,
+      resolve(parent, args) {
+        return parent._id;
+      },
+    },
     firstname: { type: GraphQLString },
     lastname: { type: GraphQLString },
     email: { type: GraphQLString },
     password: { type: GraphQLString },
     role: { type: GraphQLString },
+    ratings: { type: GraphQLList(GraphQLInt) },
+    rating: {
+      type: GraphQLFloat,
+      resolve(parent, args) {
+        const num = parent.rating;
+        return Math.round(num * 100 + Number.EPSILON) / 100;
+      },
+    },
+    ratingsCount: { type: GraphQLInt },
+    usersRate: {
+      type: StudentType,
+      resolve(parent, args) {
+        return parent.usersRateId.map((userId) =>
+          Student.findById(userId, {
+            password: 0,
+            resetPasswordToken: 0,
+            resetPasswordExpiresAt: 0,
+            verificationPasswordToken: 0,
+            verificationPasswordExpiresAt: 0,
+          })
+        );
+      },
+    },
     about_me: { type: GraphQLString },
     salary: { type: GraphQLInt },
     isActive: { type: GraphQLBoolean },
@@ -92,7 +122,29 @@ const TeacherLessonType = new GraphQLObjectType({
     },
     price: { type: GraphQLInt },
     discount: { type: GraphQLInt },
-    rating: { type: GraphQLInt },
+    ratings: { type: GraphQLList(GraphQLInt) },
+    rating: {
+      type: GraphQLFloat,
+      resolve(parent, args) {
+        const num = parent.rating;
+        return Math.round(num * 100 + Number.EPSILON) / 100;
+      },
+    },
+    ratingsCount: { type: GraphQLInt },
+    usersRate: {
+      type: StudentType,
+      resolve(parent, args) {
+        return parent.usersRateId.map((userId) =>
+          Student.findById(userId, {
+            password: 0,
+            resetPasswordToken: 0,
+            resetPasswordExpiresAt: 0,
+            verificationPasswordToken: 0,
+            verificationPasswordExpiresAt: 0,
+          })
+        );
+      },
+    },
     start_date: { type: GraphQLInt },
     week_days: { type: GraphQLList(GraphQLInt) },
     duration: { type: GraphQLInt },
@@ -149,6 +201,27 @@ const messageType = new GraphQLObjectType({
 
 const updateProfileType = StudentType | TeacherType;
 
+const RatingType = new GraphQLObjectType({
+  name: "Rating",
+  fields: () => ({
+    rate: { type: GraphQLFloat },
+    ratingNumber: { type: GraphQLInt },
+  }),
+});
+
+const RatedType = new GraphQLUnionType({
+  name: "Rated",
+  types: [TeacherType, TeacherLessonType],
+});
+
+const RateType = new GraphQLObjectType({
+  name: "Rate",
+  fields: () => ({
+    message: { type: GraphQLString },
+    ratedObj: { type: RatedType },
+  }),
+});
+
 exports.TeacherType = TeacherType;
 exports.StudentType = StudentType;
 exports.LessonType = LessonType;
@@ -157,3 +230,4 @@ exports.StudentLessonType = StudentLessonType;
 exports.RegisterSuccessType = RegisterSuccessType;
 exports.tokenType = tokenType;
 exports.messageType = messageType;
+exports.RateType = RateType;

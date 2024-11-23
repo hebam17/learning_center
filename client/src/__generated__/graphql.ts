@@ -42,6 +42,7 @@ export type Mutation = {
   forgetPassword?: Maybe<Message>;
   login?: Maybe<Token>;
   logout?: Maybe<Message>;
+  rating?: Maybe<Rate>;
   register?: Maybe<Register>;
   registerVarification?: Maybe<Token>;
   resetPassword?: Maybe<Message>;
@@ -130,6 +131,13 @@ export type MutationLogoutArgs = {
 };
 
 
+export type MutationRatingArgs = {
+  id?: InputMaybe<Scalars['ID']['input']>;
+  ratedObject?: InputMaybe<RatedObject>;
+  score?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
 export type MutationRegisterArgs = {
   email?: InputMaybe<Scalars['String']['input']>;
   firstname?: InputMaybe<Scalars['String']['input']>;
@@ -173,7 +181,6 @@ export type MutationUpdateStudentArgs = {
 
 export type MutationUpdateTeacherArgs = {
   about_me?: InputMaybe<Scalars['String']['input']>;
-  classes_num?: InputMaybe<Scalars['Int']['input']>;
   education?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   email?: InputMaybe<Scalars['String']['input']>;
   experience?: InputMaybe<Scalars['Int']['input']>;
@@ -181,6 +188,7 @@ export type MutationUpdateTeacherArgs = {
   id: Scalars['ID']['input'];
   isActive?: InputMaybe<Scalars['Boolean']['input']>;
   lastname?: InputMaybe<Scalars['String']['input']>;
+  lessons_num?: InputMaybe<Scalars['Int']['input']>;
   role?: InputMaybe<RoleUpdate>;
   salary?: InputMaybe<Scalars['Int']['input']>;
 };
@@ -215,6 +223,19 @@ export type MutationWhishlistRemoveArgs = {
   id: Scalars['ID']['input'];
   studentId: Scalars['ID']['input'];
 };
+
+export type Rate = {
+  __typename?: 'Rate';
+  message?: Maybe<Scalars['String']['output']>;
+  ratedObj?: Maybe<Rated>;
+};
+
+export type Rated = Teacher | TeacherLesson;
+
+export enum RatedObject {
+  Lesson = 'lesson',
+  Teacher = 'teacher'
+}
 
 export type Register = {
   __typename?: 'Register';
@@ -309,10 +330,14 @@ export type Teacher = {
   isActive?: Maybe<Scalars['Boolean']['output']>;
   lastname?: Maybe<Scalars['String']['output']>;
   password?: Maybe<Scalars['String']['output']>;
+  rating?: Maybe<Scalars['Float']['output']>;
+  ratings?: Maybe<Array<Maybe<Scalars['Int']['output']>>>;
+  ratingsCount?: Maybe<Scalars['Int']['output']>;
   resetPasswordExpiresAt?: Maybe<Scalars['Int']['output']>;
   resetPasswordToken?: Maybe<Scalars['String']['output']>;
   role?: Maybe<Scalars['String']['output']>;
   salary?: Maybe<Scalars['Int']['output']>;
+  usersRate?: Maybe<Student>;
   verificationPasswordExpiresAt?: Maybe<Scalars['Int']['output']>;
   verificationPasswordToken?: Maybe<Scalars['String']['output']>;
 };
@@ -326,13 +351,16 @@ export type TeacherLesson = {
   is_full?: Maybe<Scalars['Boolean']['output']>;
   lesson?: Maybe<Lesson>;
   price?: Maybe<Scalars['Int']['output']>;
-  rating?: Maybe<Scalars['Int']['output']>;
+  rating?: Maybe<Scalars['Float']['output']>;
+  ratings?: Maybe<Array<Maybe<Scalars['Int']['output']>>>;
+  ratingsCount?: Maybe<Scalars['Int']['output']>;
   start_date?: Maybe<Scalars['Int']['output']>;
   start_time?: Maybe<Scalars['Int']['output']>;
   students?: Maybe<Array<Maybe<Student>>>;
   students_num?: Maybe<Scalars['Int']['output']>;
   teacher?: Maybe<Teacher>;
   type?: Maybe<Scalars['String']['output']>;
+  usersRate?: Maybe<Student>;
   week_days?: Maybe<Array<Maybe<Scalars['Int']['output']>>>;
 };
 

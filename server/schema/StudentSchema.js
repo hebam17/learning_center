@@ -6,12 +6,19 @@ const {
   GraphQLID,
   GraphQLBoolean,
   GraphQLError,
+  GraphQLEnumType,
 } = require("graphql");
-const { StudentType, StudentLessonType, LessonType } = require("./Types");
+const {
+  StudentType,
+  StudentLessonType,
+  LessonType,
+  RateType,
+} = require("./Types");
 const Student = require("../models/Student");
 const Student_Lesson = require("../models/Student_Lesson");
 const Teacher_Lesson = require("../models/Teacher_Lesson");
 const { errorHandler, idCheck } = require("../utils/errorHandler");
+const Teacher = require("../models/Teacher");
 
 const queryFields = {
   students: {
@@ -20,7 +27,13 @@ const queryFields = {
       try {
         return Student.find(
           {},
-          { firstname: 1, lastname: 1, email: 1, isActive: 1 }
+          {
+            password: 0,
+            resetPasswordToken: 0,
+            resetPasswordExpiresAt: 0,
+            verificationEmailToken: 0,
+            verificationEmailExpiresAt: 0,
+          }
         );
       } catch (err) {
         errorHandler(err);
@@ -35,10 +48,11 @@ const queryFields = {
         idCheck(args.id);
 
         const student = Student.findById(args.id, {
-          firstname: 1,
-          lastname: 1,
-          email: 1,
-          isActive: 1,
+          password: 0,
+          resetPasswordToken: 0,
+          resetPasswordExpiresAt: 0,
+          verificationEmailToken: 0,
+          verificationEmailExpiresAt: 0,
         });
 
         if (!student)
@@ -153,6 +167,75 @@ const mutationFields = {
         }
 
         return student;
+      } catch (err) {
+        errorHandler(err);
+      }
+    },
+  },
+  rating: {
+    type: RateType,
+    args: {
+      // the Teacher | Lesson id
+      id: { type: GraphQLID },
+      score: { type: GraphQLInt },
+      ratedObject: {
+        type: new GraphQLEnumType({
+          name: "RatedObject",
+          values: {
+            teacher: { value: "Teacher" },
+            lesson: { value: "Lesson" },
+          },
+        }),
+      },
+    },
+    async resolve(parent, args) {
+      try {
+        const { isAuth, user } = req.raw;
+        if (!isAuth || !user)
+          throw new GraphQLError("You are unauthorized", {
+            extensions: {
+              code: "UNAUTHORIZED",
+              http: { status: 401 },
+            },
+          });
+
+        idCheck(args.id);
+        const isTeacher = args.ratedObject === "Teacher" ? true : false;
+
+        let ratedObj;
+        if (isTeacher) {
+          ratedObj = await Teacher.findByIdAndUpdate(args.id, {
+            $set: {
+              $push: { ratings: args.score },
+              $addToSet: { usersRatedId: user.userId },
+            },
+          });
+
+          if (!ratedObj)
+            throw new GraphQLError("This teacher was not found!", {
+              extensions: {
+                code: "NOT FOUND",
+                http: { status: 404 },
+              },
+            });
+        } else {
+          ratedObj = await Teacher_Lesson.findByIdAndUpdate(args.id, {
+            $set: {
+              $push: { ratings: args.score },
+              $addToSet: { usersRatedId: user.userId },
+            },
+          });
+
+          if (!ratedObj)
+            throw new GraphQLError("This lesson was not found!", {
+              extensions: {
+                code: "NOT FOUND",
+                http: { status: 404 },
+              },
+            });
+        }
+
+        return ratedObj;
       } catch (err) {
         errorHandler(err);
       }

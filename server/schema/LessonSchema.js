@@ -156,7 +156,7 @@ const mutationFields = {
         }
         return lesson;
       } catch (err) {
-        errorHandler(arr);
+        errorHandler(err);
       }
     },
   },

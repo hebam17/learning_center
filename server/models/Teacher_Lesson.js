@@ -23,16 +23,17 @@ const TeacherLessonSchema = mongoose.Schema(
       max: 100,
       default: 0,
     },
-    rating: {
-      type: Number,
-      min: 0,
-      max: 5,
-      default: 0,
+    ratings: {
+      type: [Number],
+      default: [],
+    },
+    usersRateId: {
+      type: [mongoose.Schema.ObjectId],
+      ref: "Student",
+      default: [],
     },
     week_days: {
       type: [Number],
-      min: 0,
-      max: 6,
     },
     type: {
       type: String,

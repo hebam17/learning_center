@@ -20,16 +20,41 @@ const queryFields = {
     type: new GraphQLList(TeacherType),
     resolve(parent, args) {
       try {
-        return Teacher.find(
-          {},
+        // return Teacher.find(
+        //   {},
+        //   {
+        //     password: 0,
+        //     resetPasswordToken: 0,
+        //     resetPasswordExpiresAt: 0,
+        //     verificationEmailToken: 0,
+        //     verificationEmailExpiresAt: 0,
+        //   }
+        // );
+        return Teacher.aggregate([
           {
-            password: 0,
-            resetPasswordToken: 0,
-            resetPasswordExpiresAt: 0,
-            verificationPasswordToken: 0,
-            verificationPasswordExpiresAt: 0,
-          }
-        );
+            $addFields: {
+              ratingsCount: {
+                $size: "$ratings",
+              },
+              rating: {
+                $avg: "$ratings",
+              },
+            },
+          },
+          {
+            $sort: {
+              rating: -1,
+            },
+          },
+          {
+            $project: {
+              resetPasswordToken: 0,
+              resetPasswordExpiresAt: 0,
+              verificationEmailToken: 0,
+              verificationEmailExpiresAt: 0,
+            },
+          },
+        ]);
       } catch (error) {
         errorHandler(error);
       }
@@ -46,8 +71,8 @@ const queryFields = {
           password: 0,
           resetPasswordToken: 0,
           resetPasswordExpiresAt: 0,
-          verificationPasswordToken: 0,
-          verificationPasswordExpiresAt: 0,
+          verificationEmailToken: 0,
+          verificationEmailExpiresAt: 0,
         });
       } catch (err) {
         errorHandler(err);
@@ -86,7 +111,7 @@ const mutationFields = {
   //       }),
   //     },
   //     about_me: { type: GraphQLString },
-  //     classes_num: { type: GraphQLInt },
+  //     lessons_num: { type: GraphQLInt },
   //     salary: { type: GraphQLInt },
   //     isActive: { type: GraphQLBoolean },
   //   },
@@ -99,7 +124,7 @@ const mutationFields = {
   //       about_me: args.about_me,
   // education: { type: GraphQLList(GraphQLString) },
   // experience: { type: GraphQLInt },
-  //       classes_num: args.classes_num,
+  //       lessons_num: args.lessons_num,
   //       salary: args.salary,
   //       isActive: args.isActive,
   //     });
@@ -127,7 +152,7 @@ const mutationFields = {
       about_me: { type: GraphQLString },
       education: { type: GraphQLList(GraphQLString) },
       experience: { type: GraphQLInt },
-      classes_num: { type: GraphQLInt },
+      lessons_num: { type: GraphQLInt },
       salary: { type: GraphQLInt },
       isActive: { type: GraphQLBoolean },
     },
@@ -145,7 +170,7 @@ const mutationFields = {
               role: args.role,
               about_me: args.about_me,
               experience: args.experience,
-              classes_num: args.classes_num,
+              lessons_num: args.lessons_num,
               salary: args.salary,
               isActive: args.isActive,
             },
