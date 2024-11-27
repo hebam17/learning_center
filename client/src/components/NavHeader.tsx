@@ -99,9 +99,10 @@ export default function NavHeader() {
           ></div>
         )}
         <div
-          className={`${
-            !navOpen ? "translate-x-full" : "translate-x-0"
-          } absolute transition-all lg:hidden duration-700 bg-secondary-900 w-3/5 top-0 right-0 h-screen overflow-y-scroll z-10`}
+          className={`
+           absolute transition-all lg:hidden duration-700 bg-secondary-900 w-3/5 top-0 right-0 h-screen overflow-y-scroll z-10 ${
+             !navOpen ? "translate-x-full" : "translate-x-0"
+           }`}
         >
           {/* CLOSE BUTTON */}
           <div className="p-4 border-b-1 border-gray-500 cursor-pointer flex justify-end">

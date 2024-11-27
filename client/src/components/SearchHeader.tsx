@@ -1,6 +1,6 @@
 import { useQuery } from "@apollo/client";
 import Logo from "./Logo";
-import { GET_LESSONS } from "../graphql/queries/lessonQueries";
+import { GET_LESSONS } from "../graphql/queries/LessonQueries";
 import { ChangeEvent, ReactElement, useEffect, useRef, useState } from "react";
 import {
   Link,
@@ -32,7 +32,7 @@ export default function SearchHeader() {
   const dropDownRef = useRef<HTMLDivElement>(null);
 
   // FOR TESTING
-  const isLoggedIn: boolean = true;
+  const isLoggedIn: boolean = false;
   const username: string = "Jane Doe";
   const userId: string = "jkdslauf0eisurike3jwrl";
 
@@ -160,16 +160,10 @@ export default function SearchHeader() {
         {/* RIGHT SIDE */}
         {!isLoggedIn && (
           <div className="lg:flex gap-2 hidden">
-            <NavLink
-              to="/register"
-              className="py-2 px-3 text-primary-500 bg-primary-100 hover:text-primary-100 hover:bg-primary-500 transition-all duration-500"
-            >
+            <NavLink to="/register" className="primary-btn">
               Create Account
             </NavLink>
-            <NavLink
-              to="/login"
-              className="py-2 px-3 text-primary-100 bg-primary-500  hover:text-primary-500 hover:bg-primary-100 transition-all duration-500"
-            >
+            <NavLink to="/login" className="secondary-btn">
               Login
             </NavLink>
             {/* LOG */}
@@ -199,7 +193,7 @@ export default function SearchHeader() {
             </div>
             {/* DROPDOWN */}
             <div
-              className="absolute top-6 rounded-md right-2 transition-all duration-500 flex-col shadow-lg profle-drop hidden"
+              className="absolute top-6 rounded-md right-2 transition-all duration-500 flex-col shadow-lg profle-drop hidden z-10"
               ref={dropDownRef}
             >
               <Link

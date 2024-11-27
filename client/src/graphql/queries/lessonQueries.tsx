@@ -1,7 +1,7 @@
 import { gql } from "../../__generated__";
 
 export const GET_LESSONS = gql(`
-  query getLessons {
+  query GetLessons {
     lessons{
       id
       material
@@ -10,3 +10,14 @@ export const GET_LESSONS = gql(`
     }
   }
 `);
+
+export const GET_LESSON = gql(`
+    query GetLesson {
+      lesson{
+        id
+        material
+        title
+        description
+      }
+    }
+  `);
