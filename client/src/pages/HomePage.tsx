@@ -1,12 +1,13 @@
 import { Link } from "react-router-dom";
 import teacherInClassroom from "/images/pexels-max-fischer-5212703.jpg";
+import { CategoryCard } from "../components/CategoryCards";
 
 function HomePage() {
   return (
     <>
-      <section className="flex md:flex-row flex-col-reverse md:gap-0 gap-5 lg:mb-12 md:mb-10 sm:mb-8 mb-6 min-h-[80vh] max-h-screen">
-        <div className="flex justify-center content-center items-start flex-col lg:mx-[10vw] md:mx-[5vw] mx-5 md:gap-8 gap-5">
-          <h1 className="lg:text-5xl md:text-4xl  text-3xl text-gray-900 font-bold">
+      <section className="flex md:flex-row flex-col-reverse md:gap-0 gap-5 lg:mb-12 md:mb-10 sm:mb-8 mb-6 min-h-[70vh] max-h-screen">
+        <div className="flex justify-center content-center items-start flex-col margin-all md:gap-8 gap-5">
+          <h1 className="lg:text-5xl md:text-4xl text-3xl text-gray-900 font-bold">
             Learn with experts and Join best universities in the world
           </h1>
           <p className="text-gray-700 text-base">
@@ -18,12 +19,14 @@ function HomePage() {
           </Link>
         </div>
         {/* Image side */}
-        <div className="md:h-auto sm:h-[70vh] h-[50vh]">
+        <div className="md:h-auto h-[50vh]">
           <div id="main-img">
             <img
               src={teacherInClassroom}
               alt="A teacher in the classroom"
               id="skewed-img"
+              height="100%"
+              width="100%"
             />
           </div>
         </div>
@@ -31,6 +34,35 @@ function HomePage() {
 
       {/* ////////////////// */}
       {/* Browse By Category section */}
+      <section className="lg:px-[10vw] md:px-[5vw] px-5 py-12 bg-gray-50">
+        <h2 className="text-center lg:text-3xl md:text-2xl text-xl mb-8 text-gray-900 font-bold">
+          Browse By Category
+        </h2>
+        <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 row-auto gap-5 mb-6">
+          <CategoryCard />
+        </div>
+
+        <Link
+          to="/lessons"
+          className="text-base flex gap-2 items-center text-primary-500 justify-center"
+        >
+          Browse All Categories
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="size-6"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"
+            />
+          </svg>
+        </Link>
+      </section>
       {/* Most popular lessons */}
       {/* top teachers */}
     </>

@@ -1,3 +1,4 @@
 export default function Lesson() {
-  return <div>Lesson</div>;
+  console.log("Hey lesson!!!!!!!!!!!!!!!");
+  return <div>My Lesson</div>;
 }

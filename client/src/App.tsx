@@ -18,8 +18,11 @@ function App() {
         },
         {
           path: "/lessons",
-          element: <Lessons />,
           children: [
+            {
+              index: true,
+              element: <Lessons />,
+            },
             {
               path: ":lessonId",
               element: <Lesson />,

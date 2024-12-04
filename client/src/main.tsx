@@ -9,7 +9,7 @@ const cache = new InMemoryCache({
   typePolicies: {
     Query: {
       fields: {
-        students: {
+        lessons: {
           merge(existing, incoming) {
             return incoming;
           },
@@ -19,7 +19,7 @@ const cache = new InMemoryCache({
             return incoming;
           },
         },
-        lessons: {
+        teacherLesson: {
           merge(existing, incoming) {
             return incoming;
           },

@@ -105,17 +105,15 @@ body {
 }
 
 #main-img {
-  /* display: block; */
   width: 110%;
   height: 100%;
   margin-right: -10%;
-  /* transform: scale(100%); */
+  transform-origin: center top;
 }
 
 #skewed-img {
   transform: skew(-10deg, 0deg);
   object-fit: cover;
-  transform-origin: center;
   width: 100%;
   height: 100%;
 }
@@ -137,4 +135,8 @@ body {
 
 .secondary-btn {
   @apply py-2 px-3 text-primary-100 bg-primary-500  hover:text-primary-500 hover:bg-primary-100 transition-all duration-500;
+}
+
+.margin-all {
+  @apply lg:mx-[10vw] md:mx-[5vw] mx-5;
 }

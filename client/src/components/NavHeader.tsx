@@ -100,7 +100,7 @@ export default function NavHeader() {
         )}
         <div
           className={`
-           absolute transition-all lg:hidden duration-700 bg-secondary-900 w-3/5 top-0 right-0 h-screen overflow-y-scroll z-10 ${
+           fixed transition-all lg:hidden duration-700 bg-secondary-900 w-3/5 top-0 right-0 h-screen overflow-y-scroll z-10 ${
              !navOpen ? "translate-x-full" : "translate-x-0"
            }`}
         >
