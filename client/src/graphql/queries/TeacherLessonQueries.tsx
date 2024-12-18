@@ -1,0 +1,89 @@
+import { gql } from "../../__generated__";
+
+export const ALL_TEACHERS_LESSONS = gql(`
+  query AllTeachersLessons{
+    allTeachersLessons{
+      id
+      lesson{
+        id
+        material
+        title
+        description
+      }
+      teacher{
+        id
+        firstname
+        lastname
+        email
+        role
+        about_me
+        salary
+        isActive
+        rating
+        ratingsCount
+      }
+      students_num
+      students{
+        id
+        firstname
+        lastname
+        email
+      }
+      price
+      discount
+      rating
+      ratingsCount
+      start_date
+      week_days
+      duration
+      type
+      start_time
+      end_time
+      is_full
+    }
+  }
+`);
+
+export const TEACHER_LESSONS = gql(`
+  query TeacherLessons{
+    teacherLessons{
+      id
+      lesson{
+        id
+        material
+        title
+        description
+      }
+      teacher{
+        id
+        firstname
+        lastname
+        email
+        role
+        about_me
+        salary
+        isActive
+        rating
+        ratingsCount
+      }
+      students_num
+      students{
+        id
+        firstname
+        lastname
+        email
+      }
+      price
+      discount
+      rating
+      ratingsCount
+      start_date
+      week_days
+      duration
+      type
+      start_time
+      end_time
+      is_full
+    }
+  }
+`);

@@ -19,6 +19,7 @@ const queryFields = {
     type: GraphQLList(LessonType),
     resolve(parent, args) {
       try {
+        console.log("running lesson..");
         return Lesson.find({});
       } catch (err) {
         errorHandler(err);

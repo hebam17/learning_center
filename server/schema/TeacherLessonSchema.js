@@ -8,33 +8,124 @@ const {
   GraphQLEnumType,
   GraphQLError,
 } = require("graphql");
-const { TeacherLessonType, LessonType, StudentType } = require("./Types");
+const { TeacherLessonType } = require("./Types");
 const Teacher_Lesson = require("../models/Teacher_Lesson");
 const Student_Lesson = require("../models/Student_Lesson");
 const Student = require("../models/Student");
 const { errorHandler, idCheck } = require("../utils/errorHandler");
 const Teacher = require("../models/Teacher");
+const mongoose = require("mongoose");
 
 const queryFields = {
   teacherLesson: {
     type: TeacherLessonType,
     args: { id: { type: GraphQLID } },
-    resolve(parent, args) {
+    async resolve(parent, args) {
       try {
         idCheck(args.id);
-        return Teacher_Lesson.findById(args.id);
+        const data = await Teacher_Lesson.aggregate([
+          {
+            $match: {
+              _id: new mongoose.Types.ObjectId(`${args.id}`),
+            },
+          },
+          {
+            $addFields: {
+              ratingsCount: {
+                $size: "$ratings",
+              },
+              rating: {
+                $cond: [
+                  {
+                    $eq: ["$ratings", []],
+                  },
+                  0,
+                  {
+                    $avg: "$ratings",
+                  },
+                ],
+              },
+            },
+          },
+        ]);
+        return Array.from(data)[0];
       } catch (err) {
         errorHandler(err);
       }
     },
   },
-  allTeacherLessons: {
-    type: GraphQLList(TeacherLessonType),
+
+  allTeachersLessons: {
+    type: new GraphQLList(TeacherLessonType),
+    resolve(parent, args) {
+      try {
+        return Teacher_Lesson.aggregate([
+          {
+            $addFields: {
+              ratingsCount: {
+                $size: "$ratings",
+              },
+              rating: {
+                $cond: [
+                  {
+                    $eq: ["$ratings", []],
+                  },
+                  0,
+                  {
+                    $avg: "$ratings",
+                  },
+                ],
+              },
+            },
+          },
+          {
+            $sort: {
+              rating: -1,
+            },
+          },
+        ]);
+      } catch (error) {
+        errorHandler(error);
+      }
+    },
+  },
+
+  teacherLessons: {
+    type: new GraphQLList(TeacherLessonType),
     args: { teacherId: { type: GraphQLID } },
     resolve(parent, args) {
       try {
         idCheck(args.teacherId);
-        return Teacher_Lesson.find({ teacherId });
+        return Teacher_Lesson.aggregate([
+          {
+            $match: {
+              teacherId: new mongoose.Types.ObjectId(`${args.teacherId}`),
+            },
+          },
+          {
+            $addFields: {
+              ratingsCount: {
+                $size: "$ratings",
+              },
+              rating: {
+                $cond: [
+                  {
+                    $eq: ["$ratings", []],
+                  },
+                  0,
+                  {
+                    $avg: "$ratings",
+                  },
+                ],
+              },
+            },
+          },
+          {
+            $sort: {
+              rating: -1,
+            },
+          },
+        ]);
       } catch (err) {
         errorHandler(err);
       }
@@ -58,15 +149,16 @@ const mutationFields = {
       lessonId: { type: GraphQLNonNull(GraphQLID) },
       teacherId: { type: GraphQLNonNull(GraphQLID) },
       students_num: { type: GraphQLInt },
+      enrolled_students_num: { type: GraphQLInt },
       students: { type: GraphQLList(GraphQLID) },
       price: { type: GraphQLInt },
       discount: { type: GraphQLInt },
       rating: { type: GraphQLInt },
-      start_date: { type: GraphQLInt },
+      start_date: { type: GraphQLString },
       duration: { type: GraphQLInt },
       week_days: { type: GraphQLList(GraphQLInt) },
-      start_time: { type: GraphQLInt },
-      end_time: { type: GraphQLInt },
+      start_time: { type: GraphQLString },
+      end_time: { type: GraphQLString },
       is_full: { type: GraphQLBoolean },
     },
     resolve(parent, args) {
@@ -74,15 +166,19 @@ const mutationFields = {
         idCheck(args.lessonId);
         idCheck(args.teacherId);
 
+        // Create a date object from ISO date string
+        const startDate = new Date(args.start_date);
+
         const teacherLesson = new Teacher_Lesson({
           lessonId: args.lessonId,
           teacherId: args.teacherId,
           students_num: args.students_num,
+          enrolled_students_num: args.enrolled_students_num,
           students: args.students,
           price: args.price,
           discount: args.discount,
           rating: args.rating,
-          start_date: args.start_date,
+          start_date: startDate,
           duration: args.duraion,
           week_days: args.week_days,
           type: args.type,
@@ -124,20 +220,24 @@ const mutationFields = {
       lessonId: { type: GraphQLID },
       teacherId: { type: GraphQLID },
       students_num: { type: GraphQLInt },
+      enrolled_students_num: { type: GraphQLInt },
       students: { type: GraphQLList(GraphQLID) },
       price: { type: GraphQLInt },
       discount: { type: GraphQLInt },
       rating: { type: GraphQLInt },
-      start_date: { type: GraphQLInt },
+      start_date: { type: GraphQLString },
       duration: { type: GraphQLInt },
       week_days: { type: GraphQLList(GraphQLInt) },
-      start_time: { type: GraphQLInt },
-      end_time: { type: GraphQLInt },
+      start_time: { type: GraphQLString },
+      end_time: { type: GraphQLString },
       is_full: { type: GraphQLBoolean },
     },
     resolve(parent, args) {
       try {
         idCheck(args.id);
+        // Create a date object from ISO date string
+        const startDate = new Date(args.start_date);
+
         return Teacher_Lesson.findByIdAndUpdate(
           args.id,
           {
@@ -145,11 +245,12 @@ const mutationFields = {
               lessonId: args.lessonId,
               teacher: args.teacherId,
               students_num: args.students_num,
+              enrolled_students_num: args.enrolled_students_num,
               students: args.students,
               price: args.price,
               discount: args.discount,
               rating: args.rating,
-              start_date: args.start_date,
+              start_date: startDate,
               duration: args.duraion,
               week_days: args.week_days,
               type: args.type,

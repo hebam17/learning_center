@@ -31,12 +31,26 @@ const TeacherType = new GraphQLObjectType({
     ratings: { type: GraphQLList(GraphQLInt) },
     rating: {
       type: GraphQLFloat,
+      // If this field does not exist -we query this from a teacher lesson field- we will calculate the field value and return it from here
       resolve(parent, args) {
-        const num = parent.rating;
-        return Math.round(num * 100 + Number.EPSILON) / 100;
+        if (!parent.rating) {
+          if (parent.ratings.length === 0) return 0;
+          const sum = parent.ratings.reduce((num, result) => result + num, 0);
+          const avg = sum / (parent.ratings.length + 1);
+          return avg.toFixed(2);
+        }
       },
     },
-    ratingsCount: { type: GraphQLInt },
+    ratingsCount: {
+      type: GraphQLInt,
+      resolve(parent, args) {
+        if (!parent.ratingsCount) {
+          if (parent.ratings.length === 0) return 0;
+          return parent.ratings.length + 1;
+        }
+      },
+    },
+
     usersRate: {
       type: StudentType,
       resolve(parent, args) {
@@ -65,7 +79,12 @@ const TeacherType = new GraphQLObjectType({
 const StudentType = new GraphQLObjectType({
   name: "Student",
   fields: () => ({
-    id: { type: GraphQLID },
+    id: {
+      type: GraphQLID,
+      resolve(parent, args) {
+        return parent._id;
+      },
+    },
     firstname: { type: GraphQLString },
     lastname: { type: GraphQLString },
     email: { type: GraphQLString },
@@ -89,7 +108,12 @@ const StudentType = new GraphQLObjectType({
 const LessonType = new GraphQLObjectType({
   name: "Lesson",
   fields: () => ({
-    id: { type: GraphQLID },
+    id: {
+      type: GraphQLID,
+      resolve(parent, args) {
+        return parent._id;
+      },
+    },
     material: { type: GraphQLString },
     title: { type: GraphQLString },
     description: { type: GraphQLString },
@@ -100,13 +124,19 @@ const LessonType = new GraphQLObjectType({
 const TeacherLessonType = new GraphQLObjectType({
   name: "TeacherLesson",
   fields: () => ({
-    id: { type: GraphQLID },
+    id: {
+      type: GraphQLID,
+      resolve(parent, args) {
+        return parent._id;
+      },
+    },
     lesson: {
       type: LessonType,
       resolve(parent, args) {
         return Lesson.findById(parent.lessonId);
       },
     },
+
     teacher: {
       type: TeacherType,
       resolve(parent, args) {
@@ -114,6 +144,7 @@ const TeacherLessonType = new GraphQLObjectType({
       },
     },
     students_num: { type: GraphQLInt },
+    enrolled_students_num: { type: GraphQLInt },
     students: {
       type: GraphQLList(StudentType),
       resolve(parent, args) {
@@ -125,12 +156,26 @@ const TeacherLessonType = new GraphQLObjectType({
     ratings: { type: GraphQLList(GraphQLInt) },
     rating: {
       type: GraphQLFloat,
+      // If this field does not exist -we query this from an other query other than the teacherLesson ones- we will calculate the field value and return it from here
       resolve(parent, args) {
-        const num = parent.rating;
-        return Math.round(num * 100 + Number.EPSILON) / 100;
+        if (!parent.rating) {
+          if (parent.ratings.length === 0) return 0;
+          const sum = parent.ratings.reduce((num, result) => result + num, 0);
+          const avg = sum / (parent.ratings.length + 1);
+          return avg.toFixed(2);
+        }
       },
     },
-    ratingsCount: { type: GraphQLInt },
+    ratingsCount: {
+      type: GraphQLInt,
+      resolve(parent, args) {
+        if (!parent.ratingsCount) {
+          if (parent.ratings.length === 0) return 0;
+          return parent.ratings.length + 1;
+        }
+      },
+    },
+
     usersRate: {
       type: StudentType,
       resolve(parent, args) {
@@ -145,12 +190,18 @@ const TeacherLessonType = new GraphQLObjectType({
         );
       },
     },
-    start_date: { type: GraphQLInt },
+    start_date: {
+      type: GraphQLString,
+      resolve(parent, args) {
+        console.log(typeof parent.start_date);
+        return parent.start_date.toString();
+      },
+    },
     week_days: { type: GraphQLList(GraphQLInt) },
     duration: { type: GraphQLInt },
     type: { type: GraphQLString },
-    start_time: { type: GraphQLInt },
-    end_time: { type: GraphQLInt },
+    start_time: { type: GraphQLString },
+    end_time: { type: GraphQLString },
     is_full: { type: GraphQLBoolean },
   }),
 });
@@ -158,7 +209,12 @@ const TeacherLessonType = new GraphQLObjectType({
 const StudentLessonType = new GraphQLObjectType({
   name: "StudentLesson",
   fields: () => ({
-    id: { type: GraphQLID },
+    id: {
+      type: GraphQLID,
+      resolve(parent, args) {
+        return parent._id;
+      },
+    },
     teacherLesson: {
       type: TeacherLessonType,
       resolve(parent, args) {

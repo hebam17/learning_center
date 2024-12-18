@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import teacherInClassroom from "/images/pexels-max-fischer-5212703.jpg";
 import { CategoryCard } from "../components/CategoryCards";
+import { Lessons } from "./Lessons";
+import { LessonCards } from "../components/LessonCards";
 
 function HomePage() {
   return (
@@ -64,6 +66,7 @@ function HomePage() {
         </Link>
       </section>
       {/* Most popular lessons */}
+      <LessonCards />
       {/* top teachers */}
     </>
   );

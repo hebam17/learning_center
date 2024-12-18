@@ -20,16 +20,6 @@ const queryFields = {
     type: new GraphQLList(TeacherType),
     resolve(parent, args) {
       try {
-        // return Teacher.find(
-        //   {},
-        //   {
-        //     password: 0,
-        //     resetPasswordToken: 0,
-        //     resetPasswordExpiresAt: 0,
-        //     verificationEmailToken: 0,
-        //     verificationEmailExpiresAt: 0,
-        //   }
-        // );
         return Teacher.aggregate([
           {
             $addFields: {
@@ -37,7 +27,15 @@ const queryFields = {
                 $size: "$ratings",
               },
               rating: {
-                $avg: "$ratings",
+                $cond: [
+                  {
+                    $eq: ["$ratings", []],
+                  },
+                  0,
+                  {
+                    $avg: "$ratings",
+                  },
+                ],
               },
             },
           },
@@ -64,28 +62,49 @@ const queryFields = {
   teacher: {
     type: TeacherType,
     args: { id: { type: GraphQLID } },
-    resolve(parent, args) {
+    async resolve(parent, args) {
       try {
         idCheck(args.id);
-        return Teacher.findById(args.id, {
-          password: 0,
-          resetPasswordToken: 0,
-          resetPasswordExpiresAt: 0,
-          verificationEmailToken: 0,
-          verificationEmailExpiresAt: 0,
-        });
-      } catch (err) {
-        errorHandler(err);
-      }
-    },
-  },
-  teacherLessons: {
-    type: GraphQLList(TeacherLessonType),
-    args: { id: { type: GraphQLID } },
-    resolve(parent, args) {
-      try {
-        idCheck(args.id);
-        return Teacher_Lesson.find({ teacherId: args.id });
+
+        const data = await Teacher.aggregate([
+          {
+            $match: {
+              _id: new mongoose.Types.ObjectId(`${args.id}`),
+            },
+          },
+          {
+            $addFields: {
+              ratingsCount: {
+                $size: "$ratings",
+              },
+              rating: {
+                $cond: [
+                  {
+                    $eq: ["$ratings", []],
+                  },
+                  0,
+                  {
+                    $avg: "$ratings",
+                  },
+                ],
+              },
+            },
+          },
+          {
+            $sort: {
+              rating: -1,
+            },
+          },
+          {
+            $project: {
+              resetPasswordToken: 0,
+              resetPasswordExpiresAt: 0,
+              verificationEmailToken: 0,
+              verificationEmailExpiresAt: 0,
+            },
+          },
+        ]);
+        return Array.from(data)[0];
       } catch (err) {
         errorHandler(err);
       }
