@@ -203,6 +203,7 @@ const TeacherLessonType = new GraphQLObjectType({
     start_time: { type: GraphQLString },
     end_time: { type: GraphQLString },
     is_full: { type: GraphQLBoolean },
+    description: { type: GraphQLString },
   }),
 });
 

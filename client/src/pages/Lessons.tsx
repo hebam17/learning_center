@@ -1,3 +1,5 @@
-export const Lessons = () => {
+const Lessons = () => {
   return <div>Lessons</div>;
 };
+
+export default Lessons;

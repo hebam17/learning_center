@@ -160,6 +160,7 @@ const mutationFields = {
       start_time: { type: GraphQLString },
       end_time: { type: GraphQLString },
       is_full: { type: GraphQLBoolean },
+      description: { type: GraphQLString },
     },
     resolve(parent, args) {
       try {
@@ -185,6 +186,7 @@ const mutationFields = {
           start_time: args.start_time,
           end_time: args.end_time,
           is_full: args.is_full,
+          description: args.description,
         });
 
         // Increase the teacher's lessons number by 1
@@ -231,6 +233,7 @@ const mutationFields = {
       start_time: { type: GraphQLString },
       end_time: { type: GraphQLString },
       is_full: { type: GraphQLBoolean },
+      description: { type: GraphQLString },
     },
     resolve(parent, args) {
       try {
@@ -257,6 +260,7 @@ const mutationFields = {
               start_time: args.start_time,
               end_time: args.end_time,
               is_full: args.is_full,
+              description: args.description,
             },
           },
           {

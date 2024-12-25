@@ -23,6 +23,7 @@ export const ALL_TEACHERS_LESSONS = gql(`
         ratingsCount
       }
       students_num
+      enrolled_students_num
       students{
         id
         firstname
@@ -33,6 +34,9 @@ export const ALL_TEACHERS_LESSONS = gql(`
       discount
       rating
       ratingsCount
+      usersRate{
+        id
+      }
       start_date
       week_days
       duration
@@ -40,6 +44,7 @@ export const ALL_TEACHERS_LESSONS = gql(`
       start_time
       end_time
       is_full
+      description
     }
   }
 `);
@@ -67,6 +72,7 @@ export const TEACHER_LESSONS = gql(`
         ratingsCount
       }
       students_num
+      enrolled_students_num
       students{
         id
         firstname
@@ -77,6 +83,9 @@ export const TEACHER_LESSONS = gql(`
       discount
       rating
       ratingsCount
+      usersRate{
+        id
+      }
       start_date
       week_days
       duration
@@ -84,6 +93,7 @@ export const TEACHER_LESSONS = gql(`
       start_time
       end_time
       is_full
+      description
     }
   }
 `);

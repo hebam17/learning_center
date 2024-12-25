@@ -140,3 +140,7 @@ body {
 .margin-all {
   @apply lg:mx-[10vw] md:mx-[5vw] mx-5;
 }
+
+.lesson-text{
+  @apply lg:font-medium md:text-lg text-base font-semibold
+}

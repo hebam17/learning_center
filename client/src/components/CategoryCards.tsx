@@ -32,7 +32,7 @@ export const CategoryCard = () => {
           className="flex gap-4 bg-success-100 rounded-sm p-5 items-center justify-around relative"
         >
           <Link
-            to={`/lessons/${id}`}
+            to={`/Categories/${id}`}
             className="absolute left-0 top-0 w-full h-full"
           />
           {/* Icon */}

@@ -3,8 +3,10 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import ErrorElement from "./components/ErrorElement";
 import Layout from "./pages/Layout";
-import { Lessons } from "./pages/Lessons";
+import { Categories } from "./pages/Categories";
+import Category from "./pages/Category";
 import Lesson from "./pages/Lesson";
+import Lessons from "./pages/Lessons";
 
 function App() {
   const router = createBrowserRouter([
@@ -15,6 +17,19 @@ function App() {
         {
           path: "/",
           element: <HomePage />,
+        },
+        {
+          path: "/category",
+          children: [
+            {
+              index: true,
+              element: <Categories />,
+            },
+            {
+              path: ":categoryId",
+              element: <Category />,
+            },
+          ],
         },
         {
           path: "/lessons",
