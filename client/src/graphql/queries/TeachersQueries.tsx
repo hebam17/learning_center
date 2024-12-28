@@ -8,6 +8,7 @@ export const GET_TEACHERS = gql(`
       lastname
       email
       role
+      lessons_num
       about_me
       salary
       isActive
@@ -25,6 +26,7 @@ export const GET_TEACHER = gql(`
      lastname
      email
      role
+     lessons_num
      about_me
      salary
      isActive

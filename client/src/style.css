@@ -141,6 +141,13 @@ body {
   @apply lg:mx-[10vw] md:mx-[5vw] mx-5;
 }
 
-.lesson-text{
-  @apply lg:font-medium md:text-lg text-base font-semibold
+.lesson-text {
+  @apply lg:font-medium md:text-lg text-base font-semibold;
+}
+
+.top-uni {
+  -webkit-box-shadow: 0px 0px 114px -18px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 0px 0px 114px -18px rgba(0, 0, 0, 0.75);
+  box-shadow: 0px 0px 114px -18px rgba(0, 0, 0, 0.75);
+  @apply min-w-[25%] text-lg text-primary-700 font-medium px-4 py-2 text-center;
 }

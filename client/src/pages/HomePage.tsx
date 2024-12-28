@@ -2,6 +2,8 @@ import { Link } from "react-router-dom";
 import teacherInClassroom from "/images/pexels-max-fischer-5212703.jpg";
 import { CategoryCard } from "../components/CategoryCards";
 import { LessonCards } from "../components/LessonCards";
+import TopTeachers from "../components/TopTeachers";
+import TrustedUniversities from "../components/TrustedUniversities";
 
 function HomePage() {
   return (
@@ -44,7 +46,7 @@ function HomePage() {
         </div>
 
         <Link
-          to="/lessons"
+          to="/categories"
           className="text-base flex gap-2 items-center text-primary-500 justify-center"
         >
           Browse All Categories
@@ -67,6 +69,9 @@ function HomePage() {
       {/* Most popular lessons */}
       <LessonCards />
       {/* top teachers */}
+      <TopTeachers />
+      {/* Top universities */}
+      <TrustedUniversities />
     </>
   );
 }

@@ -65,6 +65,14 @@ const TeacherType = new GraphQLObjectType({
         );
       },
     },
+    lessons_num: {
+      type: GraphQLInt,
+      resolve(parent, args) {
+        return Teacher_Lesson.countDocuments({
+          teacherId: parent._id,
+        });
+      },
+    },
     about_me: { type: GraphQLString },
     salary: { type: GraphQLInt },
     isActive: { type: GraphQLBoolean },

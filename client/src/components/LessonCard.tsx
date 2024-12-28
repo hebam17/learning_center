@@ -1,25 +1,15 @@
-import { ALL_TEACHERS_LESSONS } from "../graphql/queries/TeacherLessonQueries";
-// import { FragmentType, useFragment } from './gql/fragment-masking'
 import { TeacherLesson } from "../__generated__/graphql";
 import { Link } from "react-router-dom";
+import starSize from "../utils/starSize";
 
 type PropsType = {
   lesson: TeacherLesson;
 };
 
 export const LessonCard = ({ lesson }: PropsType) => {
-  console.log("lesson:", lesson);
-
   const handleError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
     const randomNum = Math.floor(Math.random() * 10);
     e.target.src = `/images/study-${randomNum}.jpg`;
-  };
-
-  const starSize = (): number => {
-    const rate: number = (lesson.rating?.toFixed(1) / 5) * 100;
-    console.log("rate:", rate);
-
-    return rate;
   };
 
   const colors = [
@@ -98,7 +88,9 @@ export const LessonCard = ({ lesson }: PropsType) => {
                 />
               </svg>
               <div
-                className={`absolute top-0 left-0 p-0 w-[${starSize()}%] overflow-hidden`}
+                className={`absolute top-0 left-0 p-0 w-[${starSize(
+                  lesson.rating || 0
+                )}%] overflow-hidden`}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
