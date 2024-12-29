@@ -4,7 +4,7 @@ export const ALL_TEACHERS_LESSONS = gql(`
   query AllTeachersLessons{
     allTeachersLessons{
       id
-      lesson{
+      category{
         id
         material
         title
@@ -53,7 +53,7 @@ export const TEACHER_LESSONS = gql(`
   query TeacherLessons{
     teacherLessons{
       id
-      lesson{
+      category{
         id
         material
         title

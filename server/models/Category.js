@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const LessonSchema = mongoose.Schema(
+const CategorySchema = mongoose.Schema(
   {
     material: {
       type: String,
@@ -26,6 +26,6 @@ const LessonSchema = mongoose.Schema(
   { timestamps: true }
 );
 
-const Lesson = mongoose.model("Lesson", LessonSchema);
+const Category = mongoose.model("Category", CategorySchema);
 
-module.exports = Lesson;
+module.exports = Category;

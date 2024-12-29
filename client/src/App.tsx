@@ -19,7 +19,7 @@ function App() {
           element: <HomePage />,
         },
         {
-          path: "/category",
+          path: "/categories",
           children: [
             {
               index: true,

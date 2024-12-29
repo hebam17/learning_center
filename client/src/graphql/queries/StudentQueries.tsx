@@ -10,7 +10,7 @@ export const GET_STUDENTS = gql(`
       password
       whishlistLessons{
         id
-        lesson{
+        category{
           id
           material
           title
@@ -37,7 +37,7 @@ export const GET_STUDENT = gql(`
       password
       whishlistLessons{
         id
-        lesson{
+        category{
           id
           material
           title

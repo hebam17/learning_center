@@ -37,8 +37,8 @@ export const LessonCard = ({ lesson }: PropsType) => {
       />
       <div className="max-w-[35%] rounded-sm">
         <img
-          src={`/images/study-${lesson.lesson?.material?.toLowerCase()}.jpg`}
-          alt={`${lesson.lesson?.description}`}
+          src={`/images/study-${lesson.category?.material?.toLowerCase()}.jpg`}
+          alt={`${lesson.category?.description}`}
           onError={handleError}
           className="object-cover object-center h-full w-full"
         />
@@ -47,7 +47,7 @@ export const LessonCard = ({ lesson }: PropsType) => {
         {/* First Row */}
         <div className="flex justify-between">
           <div className={`${color()} px-2 py-1 rounded-md`}>
-            {lesson.lesson?.material}
+            {lesson.category?.material}
           </div>
           <div className="flex gap-2 items-center">
             <span className="lesson-text text-gray-900">

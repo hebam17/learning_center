@@ -146,7 +146,7 @@ const mutationFields = {
           },
         }),
       },
-      lessonId: { type: GraphQLNonNull(GraphQLID) },
+      categoryId: { type: GraphQLNonNull(GraphQLID) },
       teacherId: { type: GraphQLNonNull(GraphQLID) },
       students_num: { type: GraphQLInt },
       enrolled_students_num: { type: GraphQLInt },
@@ -164,14 +164,14 @@ const mutationFields = {
     },
     resolve(parent, args) {
       try {
-        idCheck(args.lessonId);
+        idCheck(args.categoryId);
         idCheck(args.teacherId);
 
         // Create a date object from ISO date string
         const startDate = new Date(args.start_date);
 
         const teacherLesson = new Teacher_Lesson({
-          lessonId: args.lessonId,
+          categoryId: args.categoryId,
           teacherId: args.teacherId,
           students_num: args.students_num,
           enrolled_students_num: args.enrolled_students_num,
@@ -179,8 +179,8 @@ const mutationFields = {
           price: args.price,
           discount: args.discount,
           rating: args.rating,
-          start_date: startDate,
-          duration: args.duraion,
+          start_date: args.start_date,
+          duration: args.duration,
           week_days: args.week_days,
           type: args.type,
           start_time: args.start_time,
@@ -219,7 +219,7 @@ const mutationFields = {
           },
         }),
       },
-      lessonId: { type: GraphQLID },
+      categoryId: { type: GraphQLID },
       teacherId: { type: GraphQLID },
       students_num: { type: GraphQLInt },
       enrolled_students_num: { type: GraphQLInt },
@@ -245,7 +245,7 @@ const mutationFields = {
           args.id,
           {
             $set: {
-              lessonId: args.lessonId,
+              categoryId: args.categoryId,
               teacher: args.teacherId,
               students_num: args.students_num,
               enrolled_students_num: args.enrolled_students_num,
@@ -253,8 +253,8 @@ const mutationFields = {
               price: args.price,
               discount: args.discount,
               rating: args.rating,
-              start_date: startDate,
-              duration: args.duraion,
+              start_date: args.start_date,
+              duration: args.duration,
               week_days: args.week_days,
               type: args.type,
               start_time: args.start_time,

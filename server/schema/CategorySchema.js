@@ -6,8 +6,8 @@ const {
   GraphQLEnumType,
   GraphQLError,
 } = require("graphql");
-const { LessonType } = require("./Types");
-const Lesson = require("../models/Lesson");
+const { CategoryType } = require("./Types");
+const Category = require("../models/Category");
 const Teacher = require("../models/Teacher");
 const Teacher_Lesson = require("../models/Teacher_Lesson");
 const Student_Lesson = require("../models/Student_Lesson");
@@ -15,24 +15,24 @@ const { mongoose } = require("mongoose");
 const { idCheck, errorHandler } = require("../utils/errorHandler");
 
 const queryFields = {
-  lessons: {
-    type: GraphQLList(LessonType),
+  categories: {
+    type: GraphQLList(CategoryType),
     resolve(parent, args) {
       try {
         console.log("running lesson..");
-        return Lesson.find({});
+        return Category.find({});
       } catch (err) {
         errorHandler(err);
       }
     },
   },
-  lesson: {
-    type: LessonType,
+  category: {
+    type: CategoryType,
     args: { id: { type: GraphQLID } },
     resolve(parent, args) {
       try {
         idCheck(args.id);
-        return Lesson.findById(args.id);
+        return Category.findById(args.id);
       } catch (err) {
         errorHandler(err);
       }
@@ -41,8 +41,8 @@ const queryFields = {
 };
 
 const mutationFields = {
-  addLesson: {
-    type: LessonType,
+  addCategory: {
+    type: CategoryType,
     args: {
       material: {
         type: new GraphQLEnumType({
@@ -67,21 +67,21 @@ const mutationFields = {
     },
     resolve(parent, args) {
       try {
-        const lesson = new Lesson({
+        const category = new Category({
           material: args.material,
           title: args.title,
           description: args.description,
         });
 
-        return lesson.save();
+        return category.save();
       } catch (err) {
         errorHandler(err);
       }
     },
   },
 
-  updateLesson: {
-    type: LessonType,
+  updateCategory: {
+    type: CategoryType,
     args: {
       id: { type: GraphQLNonNull(GraphQLID) },
       material: {
@@ -109,7 +109,7 @@ const mutationFields = {
     resolve(parent, args) {
       try {
         idCheck(args.id);
-        return Lesson.findByIdAndUpdate(
+        return Category.findByIdAndUpdate(
           args.id,
           {
             $set: {
@@ -126,8 +126,8 @@ const mutationFields = {
     },
   },
 
-  deleteLesson: {
-    type: LessonType,
+  deleteCategory: {
+    type: CategoryType,
     args: { id: { type: GraphQLID } },
     async resolve(parent, args) {
       try {
@@ -135,14 +135,16 @@ const mutationFields = {
         if (!mongoose.isValidObjectId(args.id))
           throw new GraphQLError("This id is not valid");
 
-        // delete the lesson
-        const lesson = await Lesson.findByIdAndDelete(args.id);
-        console.log(lesson);
+        // delete the category
+        const category = await Category.findByIdAndDelete(args.id);
+        console.log(category);
 
-        if (!lesson) throw new GraphQLError("This lesson wasn't found!");
+        if (!category) throw new GraphQLError("This category wasn't found!");
 
-        // get all teacher lessons associated with it
-        const teacherLesson = await Teacher_Lesson.find({ lessonId: args.id });
+        // get all teacher categorys associated with it
+        const teacherLesson = await Teacher_Lesson.find({
+          categotyId: args.id,
+        });
 
         if (teacherLesson) {
           // loop through each teacher lesson and delete the associated sutdent lesson
@@ -152,10 +154,10 @@ const mutationFields = {
           );
 
           // delete the teacher lesson
-          await Teacher_Lesson.deleteMany({ lessonId: args.id });
-          return lesson;
+          await Teacher_Lesson.deleteMany({ categoryId: args.id });
+          return category;
         }
-        return lesson;
+        return category;
       } catch (err) {
         errorHandler(err);
       }

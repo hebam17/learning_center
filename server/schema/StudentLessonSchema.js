@@ -5,13 +5,8 @@ const {
   GraphQLError,
 } = require("graphql");
 const ObjectId = require("mongoose").ObjectId;
-const {
-  StudentLessonType,
-  TeacherLessonType,
-  StudentType,
-} = require("./Types");
+const { StudentLessonType } = require("./Types");
 const Student_Lesson = require("../models/Student_Lesson");
-const Teacher = require("../models/Teacher");
 const Teacher_Lesson = require("../models/Teacher_Lesson");
 const { idCheck, errorHandler } = require("../utils/errorHandler");
 
@@ -66,11 +61,6 @@ const mutationFields = {
 
         if (teacherLesson?.is_full)
           throw new GraphQLError("This class is no longer accepts students!");
-
-        // const existStudentLesson = await Student_Lesson.findOne({
-        //   teacherLessonId: args.teacherLessonId,
-        //   studentId: args.studentId,
-        // });
 
         if (teacherLesson?.students?.includes(args.studentId))
           throw new GraphQLError("You already enrolled in this class!");

@@ -1,6 +1,6 @@
 import { useQuery } from "@apollo/client";
 import Logo from "./Logo";
-import { GET_LESSONS } from "../graphql/queries/LessonQueries";
+import { GET_CATEGORIES } from "../graphql/queries/CategoryQueries";
 import { ChangeEvent, ReactElement, useEffect, useRef, useState } from "react";
 import {
   Link,
@@ -15,10 +15,10 @@ import "react-datalist-input/dist/styles.css";
 
 export default function SearchHeader() {
   const {
-    loading: lessonsLoading,
-    error: lessonsError,
-    data: lessonsData,
-  } = useQuery(GET_LESSONS);
+    loading: categoriesLoading,
+    error: categoriesError,
+    data: categoriesData,
+  } = useQuery(GET_CATEGORIES);
   const {
     loading: teachersLoading,
     error: teachersError,
@@ -27,7 +27,7 @@ export default function SearchHeader() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [lessonId, setLessonId] = useState<string>("");
+  const [categoryId, setcategoryId] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const dropDownRef = useRef<HTMLDivElement>(null);
 
@@ -36,17 +36,17 @@ export default function SearchHeader() {
   const username: string = "Jane Doe";
   const userId: string = "jkdslauf0eisurike3jwrl";
 
-  // Create the lesson options for the dropdown filter
-  const lessons: ReactElement[] =
-    lessonsData?.lessons?.map((lesson) => (
-      <option key={lesson?.id} value={lesson?.id?.toString()}>
-        {lesson?.material}
+  // Create the category options for the dropdown filter
+  const categories: ReactElement[] =
+    categoriesData?.categories?.map((category) => (
+      <option key={category?.id} value={category?.id?.toString()}>
+        {category?.material}
       </option>
     )) || [];
 
-  // To handle the lesson option change
-  const handleLessonIdChange = (e: ChangeEvent<HTMLSelectElement>) =>
-    setLessonId(e.target.value);
+  // To handle the category option change
+  const handlecategoryIdChange = (e: ChangeEvent<HTMLSelectElement>) =>
+    setcategoryId(e.target.value);
 
   // Create a teachers items array for the datalist
   const teachersItems =
@@ -88,19 +88,19 @@ export default function SearchHeader() {
     }
   };
 
-  // To navigate the user to the lesson's page when selected
+  // To navigate the user to the category's page when selected
   useEffect(() => {
     // Test the new path against the current path and only redirect when it's not the same
     const newPath =
-      lessonId === ""
+      categoryId === ""
         ? location.pathname
-        : lessonId === "all"
-        ? "lessons"
-        : `/lessons/${lessonId}`;
+        : categoryId === "all"
+        ? "categories"
+        : `/categories/${categoryId}`;
     const match = matchPath({ path: newPath }, location.pathname);
     console.log("match:", match);
     if (match === null) return navigate(newPath);
-  }, [lessonId, location.pathname, navigate]);
+  }, [categoryId, location.pathname, navigate]);
 
   return (
     <>
@@ -112,14 +112,14 @@ export default function SearchHeader() {
             <Logo />
           </div>
           <div className="flex items-center gap-6">
-            {/* CHOOSE LESSONS */}
+            {/* CHOOSE CATEGORIES */}
             <div className="relative custom-select">
               <select
-                name="lesson"
-                id="lessonsBrowse"
-                value={lessonId}
+                name="category"
+                id="categoriesBrowse"
+                value={categoryId}
                 className="appearance-none cursor-pointer"
-                onChange={handleLessonIdChange}
+                onChange={handlecategoryIdChange}
               >
                 <option key="browse" value="">
                   Browse a Topic
@@ -127,7 +127,7 @@ export default function SearchHeader() {
                 <option key="all" value="all">
                   All Topics
                 </option>
-                {lessons}
+                {categories}
               </select>
             </div>
 

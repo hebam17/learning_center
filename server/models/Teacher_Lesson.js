@@ -2,9 +2,9 @@ const mongoose = require("mongoose");
 
 const TeacherLessonSchema = mongoose.Schema(
   {
-    lessonId: {
+    categoryId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Lesson",
+      ref: "Category",
     },
     teacherId: {
       type: mongoose.Schema.Types.ObjectId,

@@ -16,8 +16,8 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
-export type Lesson = {
-  __typename?: 'Lesson';
+export type Category = {
+  __typename?: 'Category';
   description?: Maybe<Scalars['String']['output']>;
   id?: Maybe<Scalars['ID']['output']>;
   material?: Maybe<Scalars['String']['output']>;
@@ -31,9 +31,9 @@ export type Message = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  addLesson?: Maybe<Lesson>;
+  addCategory?: Maybe<Category>;
   addTeacherLesson?: Maybe<TeacherLesson>;
-  deleteLesson?: Maybe<Lesson>;
+  deleteCategory?: Maybe<Category>;
   deleteStudent?: Maybe<Student>;
   deleteTeacher?: Maybe<Teacher>;
   deleteTeacherLesson?: Maybe<TeacherLesson>;
@@ -46,7 +46,7 @@ export type Mutation = {
   register?: Maybe<Register>;
   registerVarification?: Maybe<Token>;
   resetPassword?: Maybe<Message>;
-  updateLesson?: Maybe<Lesson>;
+  updateCategory?: Maybe<Category>;
   updateStudent?: Maybe<Student>;
   updateTeacher?: Maybe<Teacher>;
   updateTeacherLesson?: Maybe<TeacherLesson>;
@@ -55,7 +55,7 @@ export type Mutation = {
 };
 
 
-export type MutationAddLessonArgs = {
+export type MutationAddCategoryArgs = {
   description?: InputMaybe<Scalars['String']['input']>;
   material?: InputMaybe<Material>;
   title: Scalars['String']['input'];
@@ -63,13 +63,13 @@ export type MutationAddLessonArgs = {
 
 
 export type MutationAddTeacherLessonArgs = {
+  categoryId: Scalars['ID']['input'];
   description?: InputMaybe<Scalars['String']['input']>;
   discount?: InputMaybe<Scalars['Int']['input']>;
   duration?: InputMaybe<Scalars['Int']['input']>;
   end_time?: InputMaybe<Scalars['String']['input']>;
   enrolled_students_num?: InputMaybe<Scalars['Int']['input']>;
   is_full?: InputMaybe<Scalars['Boolean']['input']>;
-  lessonId: Scalars['ID']['input'];
   price?: InputMaybe<Scalars['Int']['input']>;
   rating?: InputMaybe<Scalars['Int']['input']>;
   start_date?: InputMaybe<Scalars['String']['input']>;
@@ -82,7 +82,7 @@ export type MutationAddTeacherLessonArgs = {
 };
 
 
-export type MutationDeleteLessonArgs = {
+export type MutationDeleteCategoryArgs = {
   id?: InputMaybe<Scalars['ID']['input']>;
 };
 
@@ -164,7 +164,7 @@ export type MutationResetPasswordArgs = {
 };
 
 
-export type MutationUpdateLessonArgs = {
+export type MutationUpdateCategoryArgs = {
   description?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['ID']['input'];
   material?: InputMaybe<MaterialUpdate>;
@@ -197,6 +197,7 @@ export type MutationUpdateTeacherArgs = {
 
 
 export type MutationUpdateTeacherLessonArgs = {
+  categoryId?: InputMaybe<Scalars['ID']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
   discount?: InputMaybe<Scalars['Int']['input']>;
   duration?: InputMaybe<Scalars['Int']['input']>;
@@ -204,7 +205,6 @@ export type MutationUpdateTeacherLessonArgs = {
   enrolled_students_num?: InputMaybe<Scalars['Int']['input']>;
   id: Scalars['ID']['input'];
   is_full?: InputMaybe<Scalars['Boolean']['input']>;
-  lessonId?: InputMaybe<Scalars['ID']['input']>;
   price?: InputMaybe<Scalars['Int']['input']>;
   rating?: InputMaybe<Scalars['Int']['input']>;
   start_date?: InputMaybe<Scalars['String']['input']>;
@@ -250,8 +250,8 @@ export type Register = {
 export type RootQueryType = {
   __typename?: 'RootQueryType';
   allTeachersLessons?: Maybe<Array<Maybe<TeacherLesson>>>;
-  lesson?: Maybe<Lesson>;
-  lessons?: Maybe<Array<Maybe<Lesson>>>;
+  categories?: Maybe<Array<Maybe<Category>>>;
+  category?: Maybe<Category>;
   refresh?: Maybe<Token>;
   student?: Maybe<Student>;
   studentLesson?: Maybe<StudentLesson>;
@@ -264,7 +264,7 @@ export type RootQueryType = {
 };
 
 
-export type RootQueryTypeLessonArgs = {
+export type RootQueryTypeCategoryArgs = {
   id?: InputMaybe<Scalars['ID']['input']>;
 };
 
@@ -344,6 +344,7 @@ export type Teacher = {
 
 export type TeacherLesson = {
   __typename?: 'TeacherLesson';
+  category?: Maybe<Category>;
   description?: Maybe<Scalars['String']['output']>;
   discount?: Maybe<Scalars['Int']['output']>;
   duration?: Maybe<Scalars['Int']['output']>;
@@ -351,7 +352,6 @@ export type TeacherLesson = {
   enrolled_students_num?: Maybe<Scalars['Int']['output']>;
   id?: Maybe<Scalars['ID']['output']>;
   is_full?: Maybe<Scalars['Boolean']['output']>;
-  lesson?: Maybe<Lesson>;
   price?: Maybe<Scalars['Int']['output']>;
   rating?: Maybe<Scalars['Float']['output']>;
   ratings?: Maybe<Array<Maybe<Scalars['Int']['output']>>>;
@@ -451,35 +451,35 @@ export enum VerifyType {
   Teacher = 'teacher'
 }
 
-export type GetLessonsQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetCategoriesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetLessonsQuery = { __typename?: 'RootQueryType', lessons?: Array<{ __typename?: 'Lesson', id?: string | null, material?: string | null, title?: string | null, description?: string | null } | null> | null };
+export type GetCategoriesQuery = { __typename?: 'RootQueryType', categories?: Array<{ __typename?: 'Category', id?: string | null, material?: string | null, title?: string | null, description?: string | null } | null> | null };
 
-export type GetLessonQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetCategoryQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetLessonQuery = { __typename?: 'RootQueryType', lesson?: { __typename?: 'Lesson', id?: string | null, material?: string | null, title?: string | null, description?: string | null } | null };
+export type GetCategoryQuery = { __typename?: 'RootQueryType', category?: { __typename?: 'Category', id?: string | null, material?: string | null, title?: string | null, description?: string | null } | null };
 
 export type GetStudentsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetStudentsQuery = { __typename?: 'RootQueryType', students?: Array<{ __typename?: 'Student', id?: string | null, firstname?: string | null, lastname?: string | null, email?: string | null, password?: string | null, whishlistLessons?: Array<{ __typename?: 'TeacherLesson', id?: string | null, lesson?: { __typename?: 'Lesson', id?: string | null, material?: string | null, title?: string | null, description?: string | null } | null, teacher?: { __typename?: 'Teacher', id?: string | null, firstname?: string | null, lastname?: string | null, email?: string | null } | null } | null> | null } | null> | null };
+export type GetStudentsQuery = { __typename?: 'RootQueryType', students?: Array<{ __typename?: 'Student', id?: string | null, firstname?: string | null, lastname?: string | null, email?: string | null, password?: string | null, whishlistLessons?: Array<{ __typename?: 'TeacherLesson', id?: string | null, category?: { __typename?: 'Category', id?: string | null, material?: string | null, title?: string | null, description?: string | null } | null, teacher?: { __typename?: 'Teacher', id?: string | null, firstname?: string | null, lastname?: string | null, email?: string | null } | null } | null> | null } | null> | null };
 
 export type GetStudentQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetStudentQuery = { __typename?: 'RootQueryType', student?: { __typename?: 'Student', id?: string | null, firstname?: string | null, lastname?: string | null, email?: string | null, password?: string | null, whishlistLessons?: Array<{ __typename?: 'TeacherLesson', id?: string | null, lesson?: { __typename?: 'Lesson', id?: string | null, material?: string | null, title?: string | null, description?: string | null } | null, teacher?: { __typename?: 'Teacher', id?: string | null, firstname?: string | null, lastname?: string | null, email?: string | null } | null } | null> | null } | null };
+export type GetStudentQuery = { __typename?: 'RootQueryType', student?: { __typename?: 'Student', id?: string | null, firstname?: string | null, lastname?: string | null, email?: string | null, password?: string | null, whishlistLessons?: Array<{ __typename?: 'TeacherLesson', id?: string | null, category?: { __typename?: 'Category', id?: string | null, material?: string | null, title?: string | null, description?: string | null } | null, teacher?: { __typename?: 'Teacher', id?: string | null, firstname?: string | null, lastname?: string | null, email?: string | null } | null } | null> | null } | null };
 
 export type AllTeachersLessonsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type AllTeachersLessonsQuery = { __typename?: 'RootQueryType', allTeachersLessons?: Array<{ __typename?: 'TeacherLesson', id?: string | null, students_num?: number | null, enrolled_students_num?: number | null, price?: number | null, discount?: number | null, rating?: number | null, ratingsCount?: number | null, start_date?: string | null, week_days?: Array<number | null> | null, duration?: number | null, type?: string | null, start_time?: string | null, end_time?: string | null, is_full?: boolean | null, description?: string | null, lesson?: { __typename?: 'Lesson', id?: string | null, material?: string | null, title?: string | null, description?: string | null } | null, teacher?: { __typename?: 'Teacher', id?: string | null, firstname?: string | null, lastname?: string | null, email?: string | null, role?: string | null, about_me?: string | null, salary?: number | null, isActive?: boolean | null, rating?: number | null, ratingsCount?: number | null } | null, students?: Array<{ __typename?: 'Student', id?: string | null, firstname?: string | null, lastname?: string | null, email?: string | null } | null> | null, usersRate?: { __typename?: 'Student', id?: string | null } | null } | null> | null };
+export type AllTeachersLessonsQuery = { __typename?: 'RootQueryType', allTeachersLessons?: Array<{ __typename?: 'TeacherLesson', id?: string | null, students_num?: number | null, enrolled_students_num?: number | null, price?: number | null, discount?: number | null, rating?: number | null, ratingsCount?: number | null, start_date?: string | null, week_days?: Array<number | null> | null, duration?: number | null, type?: string | null, start_time?: string | null, end_time?: string | null, is_full?: boolean | null, description?: string | null, category?: { __typename?: 'Category', id?: string | null, material?: string | null, title?: string | null, description?: string | null } | null, teacher?: { __typename?: 'Teacher', id?: string | null, firstname?: string | null, lastname?: string | null, email?: string | null, role?: string | null, about_me?: string | null, salary?: number | null, isActive?: boolean | null, rating?: number | null, ratingsCount?: number | null } | null, students?: Array<{ __typename?: 'Student', id?: string | null, firstname?: string | null, lastname?: string | null, email?: string | null } | null> | null, usersRate?: { __typename?: 'Student', id?: string | null } | null } | null> | null };
 
 export type TeacherLessonsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type TeacherLessonsQuery = { __typename?: 'RootQueryType', teacherLessons?: Array<{ __typename?: 'TeacherLesson', id?: string | null, students_num?: number | null, enrolled_students_num?: number | null, price?: number | null, discount?: number | null, rating?: number | null, ratingsCount?: number | null, start_date?: string | null, week_days?: Array<number | null> | null, duration?: number | null, type?: string | null, start_time?: string | null, end_time?: string | null, is_full?: boolean | null, description?: string | null, lesson?: { __typename?: 'Lesson', id?: string | null, material?: string | null, title?: string | null, description?: string | null } | null, teacher?: { __typename?: 'Teacher', id?: string | null, firstname?: string | null, lastname?: string | null, email?: string | null, role?: string | null, about_me?: string | null, salary?: number | null, isActive?: boolean | null, rating?: number | null, ratingsCount?: number | null } | null, students?: Array<{ __typename?: 'Student', id?: string | null, firstname?: string | null, lastname?: string | null, email?: string | null } | null> | null, usersRate?: { __typename?: 'Student', id?: string | null } | null } | null> | null };
+export type TeacherLessonsQuery = { __typename?: 'RootQueryType', teacherLessons?: Array<{ __typename?: 'TeacherLesson', id?: string | null, students_num?: number | null, enrolled_students_num?: number | null, price?: number | null, discount?: number | null, rating?: number | null, ratingsCount?: number | null, start_date?: string | null, week_days?: Array<number | null> | null, duration?: number | null, type?: string | null, start_time?: string | null, end_time?: string | null, is_full?: boolean | null, description?: string | null, category?: { __typename?: 'Category', id?: string | null, material?: string | null, title?: string | null, description?: string | null } | null, teacher?: { __typename?: 'Teacher', id?: string | null, firstname?: string | null, lastname?: string | null, email?: string | null, role?: string | null, about_me?: string | null, salary?: number | null, isActive?: boolean | null, rating?: number | null, ratingsCount?: number | null } | null, students?: Array<{ __typename?: 'Student', id?: string | null, firstname?: string | null, lastname?: string | null, email?: string | null } | null> | null, usersRate?: { __typename?: 'Student', id?: string | null } | null } | null> | null };
 
 export type GetTeachersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -492,11 +492,11 @@ export type GetTeacherQueryVariables = Exact<{ [key: string]: never; }>;
 export type GetTeacherQuery = { __typename?: 'RootQueryType', teacher?: { __typename?: 'Teacher', id?: string | null, firstname?: string | null, lastname?: string | null, email?: string | null, role?: string | null, lessons_num?: number | null, about_me?: string | null, salary?: number | null, isActive?: boolean | null, rating?: number | null, ratingsCount?: number | null } | null };
 
 
-export const GetLessonsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetLessons"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"lessons"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"material"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}}]}}]} as unknown as DocumentNode<GetLessonsQuery, GetLessonsQueryVariables>;
-export const GetLessonDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetLesson"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"lesson"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"material"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}}]}}]} as unknown as DocumentNode<GetLessonQuery, GetLessonQueryVariables>;
-export const GetStudentsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetStudents"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"students"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"firstname"}},{"kind":"Field","name":{"kind":"Name","value":"lastname"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"password"}},{"kind":"Field","name":{"kind":"Name","value":"whishlistLessons"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"lesson"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"material"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}},{"kind":"Field","name":{"kind":"Name","value":"teacher"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"firstname"}},{"kind":"Field","name":{"kind":"Name","value":"lastname"}},{"kind":"Field","name":{"kind":"Name","value":"email"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetStudentsQuery, GetStudentsQueryVariables>;
-export const GetStudentDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetStudent"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"student"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"firstname"}},{"kind":"Field","name":{"kind":"Name","value":"lastname"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"password"}},{"kind":"Field","name":{"kind":"Name","value":"whishlistLessons"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"lesson"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"material"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}},{"kind":"Field","name":{"kind":"Name","value":"teacher"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"firstname"}},{"kind":"Field","name":{"kind":"Name","value":"lastname"}},{"kind":"Field","name":{"kind":"Name","value":"email"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetStudentQuery, GetStudentQueryVariables>;
-export const AllTeachersLessonsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"AllTeachersLessons"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"allTeachersLessons"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"lesson"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"material"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}},{"kind":"Field","name":{"kind":"Name","value":"teacher"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"firstname"}},{"kind":"Field","name":{"kind":"Name","value":"lastname"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"role"}},{"kind":"Field","name":{"kind":"Name","value":"about_me"}},{"kind":"Field","name":{"kind":"Name","value":"salary"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"rating"}},{"kind":"Field","name":{"kind":"Name","value":"ratingsCount"}}]}},{"kind":"Field","name":{"kind":"Name","value":"students_num"}},{"kind":"Field","name":{"kind":"Name","value":"enrolled_students_num"}},{"kind":"Field","name":{"kind":"Name","value":"students"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"firstname"}},{"kind":"Field","name":{"kind":"Name","value":"lastname"}},{"kind":"Field","name":{"kind":"Name","value":"email"}}]}},{"kind":"Field","name":{"kind":"Name","value":"price"}},{"kind":"Field","name":{"kind":"Name","value":"discount"}},{"kind":"Field","name":{"kind":"Name","value":"rating"}},{"kind":"Field","name":{"kind":"Name","value":"ratingsCount"}},{"kind":"Field","name":{"kind":"Name","value":"usersRate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"start_date"}},{"kind":"Field","name":{"kind":"Name","value":"week_days"}},{"kind":"Field","name":{"kind":"Name","value":"duration"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"start_time"}},{"kind":"Field","name":{"kind":"Name","value":"end_time"}},{"kind":"Field","name":{"kind":"Name","value":"is_full"}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}}]}}]} as unknown as DocumentNode<AllTeachersLessonsQuery, AllTeachersLessonsQueryVariables>;
-export const TeacherLessonsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"TeacherLessons"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"teacherLessons"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"lesson"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"material"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}},{"kind":"Field","name":{"kind":"Name","value":"teacher"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"firstname"}},{"kind":"Field","name":{"kind":"Name","value":"lastname"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"role"}},{"kind":"Field","name":{"kind":"Name","value":"about_me"}},{"kind":"Field","name":{"kind":"Name","value":"salary"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"rating"}},{"kind":"Field","name":{"kind":"Name","value":"ratingsCount"}}]}},{"kind":"Field","name":{"kind":"Name","value":"students_num"}},{"kind":"Field","name":{"kind":"Name","value":"enrolled_students_num"}},{"kind":"Field","name":{"kind":"Name","value":"students"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"firstname"}},{"kind":"Field","name":{"kind":"Name","value":"lastname"}},{"kind":"Field","name":{"kind":"Name","value":"email"}}]}},{"kind":"Field","name":{"kind":"Name","value":"price"}},{"kind":"Field","name":{"kind":"Name","value":"discount"}},{"kind":"Field","name":{"kind":"Name","value":"rating"}},{"kind":"Field","name":{"kind":"Name","value":"ratingsCount"}},{"kind":"Field","name":{"kind":"Name","value":"usersRate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"start_date"}},{"kind":"Field","name":{"kind":"Name","value":"week_days"}},{"kind":"Field","name":{"kind":"Name","value":"duration"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"start_time"}},{"kind":"Field","name":{"kind":"Name","value":"end_time"}},{"kind":"Field","name":{"kind":"Name","value":"is_full"}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}}]}}]} as unknown as DocumentNode<TeacherLessonsQuery, TeacherLessonsQueryVariables>;
+export const GetCategoriesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetCategories"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"categories"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"material"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}}]}}]} as unknown as DocumentNode<GetCategoriesQuery, GetCategoriesQueryVariables>;
+export const GetCategoryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetCategory"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"category"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"material"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}}]}}]} as unknown as DocumentNode<GetCategoryQuery, GetCategoryQueryVariables>;
+export const GetStudentsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetStudents"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"students"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"firstname"}},{"kind":"Field","name":{"kind":"Name","value":"lastname"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"password"}},{"kind":"Field","name":{"kind":"Name","value":"whishlistLessons"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"category"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"material"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}},{"kind":"Field","name":{"kind":"Name","value":"teacher"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"firstname"}},{"kind":"Field","name":{"kind":"Name","value":"lastname"}},{"kind":"Field","name":{"kind":"Name","value":"email"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetStudentsQuery, GetStudentsQueryVariables>;
+export const GetStudentDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetStudent"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"student"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"firstname"}},{"kind":"Field","name":{"kind":"Name","value":"lastname"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"password"}},{"kind":"Field","name":{"kind":"Name","value":"whishlistLessons"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"category"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"material"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}},{"kind":"Field","name":{"kind":"Name","value":"teacher"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"firstname"}},{"kind":"Field","name":{"kind":"Name","value":"lastname"}},{"kind":"Field","name":{"kind":"Name","value":"email"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetStudentQuery, GetStudentQueryVariables>;
+export const AllTeachersLessonsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"AllTeachersLessons"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"allTeachersLessons"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"category"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"material"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}},{"kind":"Field","name":{"kind":"Name","value":"teacher"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"firstname"}},{"kind":"Field","name":{"kind":"Name","value":"lastname"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"role"}},{"kind":"Field","name":{"kind":"Name","value":"about_me"}},{"kind":"Field","name":{"kind":"Name","value":"salary"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"rating"}},{"kind":"Field","name":{"kind":"Name","value":"ratingsCount"}}]}},{"kind":"Field","name":{"kind":"Name","value":"students_num"}},{"kind":"Field","name":{"kind":"Name","value":"enrolled_students_num"}},{"kind":"Field","name":{"kind":"Name","value":"students"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"firstname"}},{"kind":"Field","name":{"kind":"Name","value":"lastname"}},{"kind":"Field","name":{"kind":"Name","value":"email"}}]}},{"kind":"Field","name":{"kind":"Name","value":"price"}},{"kind":"Field","name":{"kind":"Name","value":"discount"}},{"kind":"Field","name":{"kind":"Name","value":"rating"}},{"kind":"Field","name":{"kind":"Name","value":"ratingsCount"}},{"kind":"Field","name":{"kind":"Name","value":"usersRate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"start_date"}},{"kind":"Field","name":{"kind":"Name","value":"week_days"}},{"kind":"Field","name":{"kind":"Name","value":"duration"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"start_time"}},{"kind":"Field","name":{"kind":"Name","value":"end_time"}},{"kind":"Field","name":{"kind":"Name","value":"is_full"}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}}]}}]} as unknown as DocumentNode<AllTeachersLessonsQuery, AllTeachersLessonsQueryVariables>;
+export const TeacherLessonsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"TeacherLessons"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"teacherLessons"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"category"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"material"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}},{"kind":"Field","name":{"kind":"Name","value":"teacher"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"firstname"}},{"kind":"Field","name":{"kind":"Name","value":"lastname"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"role"}},{"kind":"Field","name":{"kind":"Name","value":"about_me"}},{"kind":"Field","name":{"kind":"Name","value":"salary"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"rating"}},{"kind":"Field","name":{"kind":"Name","value":"ratingsCount"}}]}},{"kind":"Field","name":{"kind":"Name","value":"students_num"}},{"kind":"Field","name":{"kind":"Name","value":"enrolled_students_num"}},{"kind":"Field","name":{"kind":"Name","value":"students"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"firstname"}},{"kind":"Field","name":{"kind":"Name","value":"lastname"}},{"kind":"Field","name":{"kind":"Name","value":"email"}}]}},{"kind":"Field","name":{"kind":"Name","value":"price"}},{"kind":"Field","name":{"kind":"Name","value":"discount"}},{"kind":"Field","name":{"kind":"Name","value":"rating"}},{"kind":"Field","name":{"kind":"Name","value":"ratingsCount"}},{"kind":"Field","name":{"kind":"Name","value":"usersRate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"start_date"}},{"kind":"Field","name":{"kind":"Name","value":"week_days"}},{"kind":"Field","name":{"kind":"Name","value":"duration"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"start_time"}},{"kind":"Field","name":{"kind":"Name","value":"end_time"}},{"kind":"Field","name":{"kind":"Name","value":"is_full"}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}}]}}]} as unknown as DocumentNode<TeacherLessonsQuery, TeacherLessonsQueryVariables>;
 export const GetTeachersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetTeachers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"teachers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"firstname"}},{"kind":"Field","name":{"kind":"Name","value":"lastname"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"role"}},{"kind":"Field","name":{"kind":"Name","value":"lessons_num"}},{"kind":"Field","name":{"kind":"Name","value":"about_me"}},{"kind":"Field","name":{"kind":"Name","value":"salary"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"rating"}},{"kind":"Field","name":{"kind":"Name","value":"ratingsCount"}}]}}]}}]} as unknown as DocumentNode<GetTeachersQuery, GetTeachersQueryVariables>;
 export const GetTeacherDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetTeacher"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"teacher"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"firstname"}},{"kind":"Field","name":{"kind":"Name","value":"lastname"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"role"}},{"kind":"Field","name":{"kind":"Name","value":"lessons_num"}},{"kind":"Field","name":{"kind":"Name","value":"about_me"}},{"kind":"Field","name":{"kind":"Name","value":"salary"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"rating"}},{"kind":"Field","name":{"kind":"Name","value":"ratingsCount"}}]}}]}}]} as unknown as DocumentNode<GetTeacherQuery, GetTeacherQueryVariables>;

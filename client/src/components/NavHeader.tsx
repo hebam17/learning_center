@@ -14,7 +14,7 @@ export default function NavHeader() {
   const [navOpen, setNavOpen] = useState<boolean>(false);
 
   return (
-    <nav className="relative">
+    <nav className="sticky top-0 z-10">
       {/* LARGE SCREEN NAVIGATION  */}
       <div className="large-nav py-0 px-4 lg:flex space-between bg-secondary-900 text-gray-400 font-semibold text-base hidden">
         {/* LEFT SIDE LINKS */}
@@ -26,10 +26,10 @@ export default function NavHeader() {
             Home
           </NavLink>
           <NavLink
-            to="/lessons"
+            to="/categories"
             className={({ isActive }) => screenLinkClass(isActive)}
           >
-            Lessons
+            Categories
           </NavLink>
 
           <NavLink
@@ -134,10 +134,10 @@ export default function NavHeader() {
             </div>
             <div className="border-b-1 border-gray-500">
               <NavLink
-                to="/lessons"
+                to="/categories"
                 className={({ isActive }) => mobileLinkClass(isActive)}
               >
-                Lessons
+                Categories
               </NavLink>
             </div>
 

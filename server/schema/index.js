@@ -10,9 +10,9 @@ const {
 } = require("./TeacherSchema");
 
 const {
-  queryFields: lessonQueryFields,
-  mutationFields: lessonMutationFields,
-} = require("./LessonSchema");
+  queryFields: categoryQueryFields,
+  mutationFields: categoryMutationFields,
+} = require("./CategorySchema");
 
 const {
   queryFields: teacherLessonQueryFields,
@@ -34,7 +34,7 @@ const RootQuery = new GraphQLObjectType({
   fields: () => ({
     ...studentQueryFields,
     ...teacherQueryFields,
-    ...lessonQueryFields,
+    ...categoryQueryFields,
     ...teacherLessonQueryFields,
     ...studentLessonQueryFields,
     ...authQueryFields,
@@ -46,7 +46,7 @@ const mutation = new GraphQLObjectType({
   fields: () => ({
     ...studentMutationFields,
     ...teacherMutationFields,
-    ...lessonMutationFields,
+    ...categoryMutationFields,
     ...teacherLessonMutationFields,
     ...studentLessonMutationFields,
     ...authMutationFields,

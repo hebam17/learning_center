@@ -18,7 +18,10 @@ const TopTeachers = () => {
 
   if (teachers?.length) {
     cards = teachers?.map((teacher: Teacher, index: number) => (
-      <div className="flex flex-col justify-around relative border border-gray-100 rounded-sm max-h-[80vh]">
+      <div
+        key={teacher.id}
+        className="flex flex-col justify-around relative border border-gray-100 rounded-sm max-h-[80vh]"
+      >
         <Link
           to={`/lessons/${teacher.id}`}
           className="absolute left-0 top-0 w-full h-full"

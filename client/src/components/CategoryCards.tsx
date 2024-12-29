@@ -1,6 +1,8 @@
 import { useQuery } from "@apollo/client";
-import { GET_LESSONS } from "../graphql/queries/LessonQueries";
+import { GET_CATEGORIES } from "../graphql/queries/CategoryQueries";
 import { Link } from "react-router-dom";
+import { Category } from "../__generated__/graphql";
+import { ReactElement } from "react";
 
 enum Languages {
   English = "English",
@@ -10,21 +12,28 @@ enum Languages {
 
 export const CategoryCard = () => {
   const {
-    loading: lessonsLoading,
-    error: lessonsError,
-    data: lessonsData,
-  } = useQuery(GET_LESSONS);
+    loading: categoriesLoading,
+    error: categoriesError,
+    data: categoriesData,
+  } = useQuery(GET_CATEGORIES);
 
-  console.log(lessonsData);
   const handleError = (e) => {
     e.target.src = "/images/categories/general.svg";
   };
 
-  const cards = lessonsData?.lessons?.map(
-    ({ id, material, title, description }) => {
-      const iconName = Object.values(Languages).includes(material)
-        ? "language.svg"
-        : `${material.toLowerCase()}.svg`;
+  let cards: ReactElement | ReactElement[] = <p>Loading</p>;
+
+  if (categoriesError) {
+    cards = <p>Sorry, an error occure please try again later!</p>;
+  }
+  const categories = categoriesData?.categories as Category[];
+  if (categories?.length) {
+    cards = categories?.map((category: Category) => {
+      const { id, material, description, title } = category;
+      const iconName =
+        material && Object.values(Languages).includes(material)
+          ? "language.svg"
+          : `${material.toLowerCase()}.svg`;
 
       return (
         <div
@@ -54,8 +63,8 @@ export const CategoryCard = () => {
           </div>
         </div>
       );
-    }
-  );
+    });
+  }
 
   return cards;
 };

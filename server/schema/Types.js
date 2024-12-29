@@ -8,7 +8,7 @@ const {
   GraphQLUnionType,
   GraphQLFloat,
 } = require("graphql");
-const Lesson = require("../models/Lesson");
+const Category = require("../models/Category");
 const Teacher = require("../models/Teacher");
 const Student = require("../models/Student");
 const Teacher_Lesson = require("../models/Teacher_Lesson");
@@ -113,8 +113,8 @@ const StudentType = new GraphQLObjectType({
 });
 
 // Lesson Type
-const LessonType = new GraphQLObjectType({
-  name: "Lesson",
+const CategoryType = new GraphQLObjectType({
+  name: "Category",
   fields: () => ({
     id: {
       type: GraphQLID,
@@ -138,10 +138,10 @@ const TeacherLessonType = new GraphQLObjectType({
         return parent._id;
       },
     },
-    lesson: {
-      type: LessonType,
+    category: {
+      type: CategoryType,
       resolve(parent, args) {
-        return Lesson.findById(parent.lessonId);
+        return Category.findById(parent.categoryId);
       },
     },
 
@@ -289,7 +289,7 @@ const RateType = new GraphQLObjectType({
 
 exports.TeacherType = TeacherType;
 exports.StudentType = StudentType;
-exports.LessonType = LessonType;
+exports.CategoryType = CategoryType;
 exports.TeacherLessonType = TeacherLessonType;
 exports.StudentLessonType = StudentLessonType;
 exports.RegisterSuccessType = RegisterSuccessType;
