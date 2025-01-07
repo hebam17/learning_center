@@ -160,7 +160,7 @@ export default function SearchHeader() {
         {/* RIGHT SIDE */}
         {!isLoggedIn && (
           <div className="lg:flex gap-2 hidden">
-            <NavLink to="/register" className="primary-btn">
+            <NavLink to="/signup" className="primary-btn">
               Create Account
             </NavLink>
             <NavLink to="/login" className="secondary-btn">

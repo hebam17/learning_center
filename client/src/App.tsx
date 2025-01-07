@@ -7,9 +7,26 @@ import { Categories } from "./pages/Categories";
 import Category from "./pages/Category";
 import Lesson from "./pages/Lesson";
 import Lessons from "./pages/Lessons";
+import Signup from "./pages/Signup";
+import CustomLayout from "./pages/CustomLayout";
+import Login from "./pages/Login";
 
 function App() {
   const router = createBrowserRouter([
+    {
+      element: <CustomLayout />,
+      errorElement: <ErrorElement />,
+      children: [
+        {
+          path: "/signup",
+          element: <Signup />,
+        },
+        {
+          path: "/login",
+          element: <Login />,
+        },
+      ],
+    },
     {
       element: <Layout />,
       errorElement: <ErrorElement />,

@@ -151,3 +151,37 @@ body {
   box-shadow: 0px 0px 114px -18px rgba(0, 0, 0, 0.75);
   @apply min-w-[25%] text-lg text-primary-700 font-medium px-4 py-2 text-center;
 }
+
+/* .signup-image {
+  background-image: url("/client/public/images/signup.jpg");
+  /* @apply object-cover object-center; */
+/* } */
+
+@layer components {
+  .auth-input {
+    @apply flex flex-col text-left gap-2 mb-4;
+  }
+
+  .auth-input label {
+    @apply font-semibold text-gray-900 text-lg;
+  }
+
+  .auth-input input {
+    @apply pl-5 pr-3 py-2 border-1 border-gray-100 flex-grow rounded-sm focus:outline-none focus:border-1 focus:border-gray-400;
+  }
+}
+
+.auth-image {
+  background-image: url("/public/images/signup2.jpg");
+  background-size: 50% 100%;
+  background-repeat: no-repeat;
+  object-fit: cover;
+  object-position: center;
+  background-attachment: fixed;
+}
+
+@media only screen and (max-width: 768px) {
+  .form-image {
+    background-size: cover;
+  }
+}

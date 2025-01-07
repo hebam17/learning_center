@@ -180,7 +180,7 @@ export default function NavHeader() {
                 </div>
                 <div className="border-b-1 border-gray-500">
                   <NavLink
-                    to="/register"
+                    to="/signup"
                     className={({ isActive }) => mobileLinkClass(isActive)}
                   >
                     Create Account
