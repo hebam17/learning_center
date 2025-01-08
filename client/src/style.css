@@ -171,8 +171,15 @@ body {
   }
 }
 
-.auth-image {
+.signup-image {
   background-image: url("/public/images/signup2.jpg");
+}
+
+.login-image {
+  background-image: url("/public/images/login.jpg");
+}
+
+.auth-image {
   background-size: 50% 100%;
   background-repeat: no-repeat;
   object-fit: cover;
@@ -181,7 +188,8 @@ body {
 }
 
 @media only screen and (max-width: 768px) {
-  .form-image {
+  .auth-image {
     background-size: cover;
+    object-position: center;
   }
 }

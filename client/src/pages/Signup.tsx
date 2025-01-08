@@ -36,6 +36,7 @@ const Signup = () => {
     setConfirmPassword(e.target.value);
   };
 
+  // To show/hide password on eye icon click
   const handlePassVisibility = () => {
     setPassvisible((prev: boolean) => {
       if (passRef !== null && passRef.current !== null) {
@@ -49,6 +50,7 @@ const Signup = () => {
     });
   };
 
+  // To show/hide confirm password on eye icon click
   const handleConfPassVisibility = () => {
     setConfPassVisible((prev: boolean) => {
       if (confPassRef !== null && confPassRef.current !== null) {
@@ -67,19 +69,20 @@ const Signup = () => {
   };
 
   return (
-    <div className="m-0 p-0 flex md:justify-end justify-center min-h-screen auth-image">
-      {/* THE FORM */}
+    <div className="m-0 p-0 flex md:justify-end justify-center min-h-screen auth-image signup-image">
       <div className="flex-grow flex flex-col mt-4 px-12 justify-center md:items-end items-center border border-black">
+        {/* Title */}
         <div className="md:mt-4 md:mb-8 mt-[10vh] mb-5 w-full flex flex-col items-center lg:text-sm">
-          <h1 className="lg:text-4xl md:text-3xl text-2xl md:text-primary-500 text-gray-900 font-semibold mb-3">
+          <h1 className="md:text-3xl text-2xl md:text-primary-500 text-gray-900 font-semibold mb-3 text-center">
             Create your account
           </h1>
-          <p className="text-primary-400 text-base">
+          <p className="text-primary-400 text-base text-center">
             Join a <span>50,000+</span> student and unlock your future with us
           </p>
         </div>
-
         {/* ////////// */}
+
+        {/* THE FORM */}
         <form onSubmit={handleSubmit}>
           {/* fullname */}
           <div className="flex md:flex-row flex-col justify-around md:items-center items-left gap-4">
