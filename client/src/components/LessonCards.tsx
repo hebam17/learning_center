@@ -20,7 +20,7 @@ export const LessonCards = () => {
   }
 
   const content = (
-    <section className="lg:px-[10vw] md:px-[5vw] px-5 py-12 border border-t-gray-100 rounded-sm">
+    <section className="lg:px-[10vw] global-padding border border-t-gray-100 rounded-sm">
       <h2 className="text-left lg:text-3xl md:text-2xl text-xl mb-8 text-gray-900 font-bold">
         Our Featured Lessons
       </h2>

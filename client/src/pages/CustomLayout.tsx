@@ -5,7 +5,7 @@ const CustomLayout = () => {
   const links = [
     {
       to: "/new-teacher",
-      text: "Become an Instructor",
+      text: "Become a Teacher",
       classes: "md:inline-block hidden secondary-btn",
     },
     { to: "/signup", text: " Create Account", classes: "" },

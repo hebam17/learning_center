@@ -11,7 +11,9 @@ function HomePage() {
       <section className="flex md:flex-row flex-col-reverse md:gap-0 gap-5 lg:mb-12 md:mb-10 sm:mb-8 mb-6 min-h-[70vh] max-h-screen">
         <div className="flex justify-center content-center items-start flex-col margin-all md:gap-8 gap-5">
           <h1 className="lg:text-5xl md:text-4xl text-3xl text-gray-900 font-bold">
-            Learn with experts and Join best universities in the world
+            Learn with experts and Join{" "}
+            <span className="text-primary-500">Top</span> universities in the
+            world
           </h1>
           <p className="text-gray-700 text-base">
             Our mission is to help students to reach their potential by learning
@@ -34,10 +36,9 @@ function HomePage() {
           </div>
         </div>
       </section>
-
       {/* ////////////////// */}
       {/* Browse By Category section */}
-      <section className="lg:px-[10vw] md:px-[5vw] px-5 py-12 bg-gray-50">
+      <section className="lg:px-[10vw] global-padding bg-gray-50">
         <h2 className="text-center lg:text-3xl md:text-2xl text-xl mb-8 text-gray-900 font-bold">
           Browse By Category
         </h2>

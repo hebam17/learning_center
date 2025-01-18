@@ -152,10 +152,17 @@ body {
   @apply min-w-[25%] text-lg text-primary-700 font-medium px-4 py-2 text-center;
 }
 
-/* .signup-image {
-  background-image: url("/client/public/images/signup.jpg");
-  /* @apply object-cover object-center; */
-/* } */
+.global-padding {
+  @apply md:px-[5vw] px-5 py-12;
+}
+
+.card-shadow {
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+.card-shadow-sm {
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
 
 @layer components {
   .auth-input {
@@ -172,11 +179,11 @@ body {
 }
 
 .signup-image {
-  background-image: url("/public/images/signup2.jpg");
+  background-image: url("/images/signup2.jpg");
 }
 
 .login-image {
-  background-image: url("/public/images/login.jpg");
+  background-image: url("/images/login.jpg");
 }
 
 .auth-image {

@@ -10,6 +10,8 @@ import Lessons from "./pages/Lessons";
 import Signup from "./pages/Signup";
 import CustomLayout from "./pages/CustomLayout";
 import Login from "./pages/Login";
+import BecomeATeacher from "./pages/BecomeATeacher";
+import CreateNewTeacher from "./pages/CreateNewTeacher";
 
 function App() {
   const router = createBrowserRouter([
@@ -60,6 +62,14 @@ function App() {
               element: <Lesson />,
             },
           ],
+        },
+        {
+          path: "/new-teacher",
+          element: <BecomeATeacher />,
+        },
+        {
+          path: "/new-teacher/create-account",
+          element: <CreateNewTeacher />,
         },
       ],
     },

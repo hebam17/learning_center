@@ -20,8 +20,11 @@ export default {
         "gray-800": "#363B47",
         "gray-900": "#1D2026",
         "success-100": "#E1F7E3",
+        "success-500": "#23BD33",
         "success-700": "#15711F",
         "warning-500": "#FD8E1F",
+        "error-200": "#F4C8C8",
+        "error-500": "#E34444",
       },
       borderWidth: {
         1: "1px",

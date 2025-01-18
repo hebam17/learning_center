@@ -60,7 +60,7 @@ export default function NavHeader() {
             to="/new-teacher"
             className={({ isActive }) => screenLinkClass(isActive)}
           >
-            Become an Instructor
+            Become a Teacher
           </NavLink>
         </div>
       </div>
@@ -175,7 +175,7 @@ export default function NavHeader() {
                     to="/new-teacher"
                     className={({ isActive }) => mobileLinkClass(isActive)}
                   >
-                    Become an Instructor
+                    Become a Teacher
                   </NavLink>
                 </div>
                 <div className="border-b-1 border-gray-500">
