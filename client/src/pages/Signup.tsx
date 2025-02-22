@@ -1,9 +1,12 @@
-import { useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { useMutation } from "@apollo/client";
+import { useEffect, useRef, useState } from "react";
+import { Link, useNavigate, useNavigation } from "react-router-dom";
+import { validation } from "../utils/validations";
+import { REGISTER } from "../graphql/mutation/authMutations";
+import { RegisterSuccess, UserType } from "../__generated__/graphql";
 
 const Signup = () => {
-  const userRef = useRef();
-  const errRef = useRef();
+  const errRef = useRef<HTMLParagraphElement>(null);
   const passRef = useRef<HTMLInputElement>(null);
   const confPassRef = useRef<HTMLInputElement>(null);
   const [firstName, setFirstName] = useState("");
@@ -11,28 +14,50 @@ const Signup = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
-  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [passvisible, setPassvisible] = useState<boolean>(false);
   const [confPassVisible, setConfPassVisible] = useState<boolean>(false);
+  const navigation = useNavigation();
+  const navigate = useNavigate();
+
+  const [register, { loading, error, data }] = useMutation<RegisterSuccess>(
+    REGISTER,
+    {
+      variables: {
+        input: {
+          firstname: firstName,
+          lastname: lastName,
+          email,
+          password,
+          type: UserType.Student,
+        },
+      },
+    }
+  );
 
   const handleFnameChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    setErrorMessage(null);
     setFirstName(e.target.value);
   };
   const handleLnameChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    setErrorMessage(null);
     setLastName(e.target.value);
   };
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    setErrorMessage(null);
     setEmail(e.target.value);
   };
   const handlePasswordChange = (
     e: React.ChangeEvent<HTMLInputElement>
   ): void => {
+    setErrorMessage(null);
     setPassword(e.target.value);
   };
 
   const handleConfPassChange = (
     e: React.ChangeEvent<HTMLInputElement>
   ): void => {
+    setErrorMessage(null);
     setConfirmPassword(e.target.value);
   };
 
@@ -66,13 +91,47 @@ const Signup = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    try {
+      // Validate the user Input first
+      const validationErrors = validation({
+        firstname: firstName,
+        lastname: lastName,
+        email,
+        password,
+        confirmPassword,
+      });
+      console.log("validationErrors:", validationErrors);
+
+      setErrorMessage(validationErrors[Object.keys(validationErrors)[0]]);
+
+      console.log("errRef:", errRef);
+
+      if (errRef !== null && errRef.current !== null) errRef?.current?.focus();
+      // If no errors were found let's register
+      if (Object.keys(validationErrors).length === 0) {
+        const result = await register();
+        console.log("result:", result);
+        setErrorMessage(null);
+        navigate("/register-verification", {
+          replace: true,
+          state: {
+            data: result?.data,
+            type: UserType.Student,
+          },
+        });
+      }
+    } catch (error) {
+      console.log("error:", error);
+    }
   };
 
   return (
-    <div className="m-0 p-0 flex md:justify-end justify-center min-h-screen auth-image signup-image">
-      <div className="flex-grow flex flex-col mt-4 px-12 justify-center md:items-end items-center border border-black">
+    <div className="m-0 p-0 flex justify-center min-h-screen relative">
+      <div className="auth-image signup-image absolute top-0 left-0 w-full h-full z-[-1] hidden sm:block"></div>
+      <div className="pt-4 px-12 md:w-fit w-full bg-transparent">
         {/* Title */}
-        <div className="md:mt-4 md:mb-8 mt-[10vh] mb-5 w-full flex flex-col items-center lg:text-sm">
+        <div className="mt-[10vh] mb-5 w-full flex flex-col items-center lg:text-sm">
           <h1 className="md:text-3xl text-2xl md:text-primary-500 text-gray-900 font-semibold mb-3 text-center">
             Create your account
           </h1>
@@ -83,7 +142,16 @@ const Signup = () => {
         {/* ////////// */}
 
         {/* THE FORM */}
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="w-full">
+          {/* Error Element */}
+          {errorMessage && (
+            <p
+              ref={errRef}
+              className="bg-error-500 mb-5 p-2 text-white rounded-sm"
+            >
+              {errorMessage}
+            </p>
+          )}
           {/* fullname */}
           <div className="flex md:flex-row flex-col justify-around md:items-center items-left gap-4">
             {/* fname */}
@@ -130,7 +198,7 @@ const Signup = () => {
           </div>
           {/* //////////// */}
 
-          <div className="flex md:flex-row flex-col justify-around md:items-center items-left gap-4">
+          <div className="flex md:flex-row flex-col justify-around md:items-center items-stretch gap-4 w-full">
             {/* password */}
             <div className="auth-input">
               <label htmlFor="password">Password</label>
@@ -262,8 +330,14 @@ const Signup = () => {
           </div>
 
           <div className="flex flex-col items-center mt-5">
-            <button type="submit" className="secondary-btn">
-              Create Account
+            <button
+              type="submit"
+              className="secondary-btn"
+              disabled={navigation.state === "submitting"}
+            >
+              {navigation.state === "submitting"
+                ? "Submitting ..."
+                : "Create Account"}
             </button>
             <p className="my-3">
               Already have account?{" "}

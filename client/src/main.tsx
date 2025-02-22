@@ -5,29 +5,7 @@ import { ApolloProvider, ApolloClient, InMemoryCache } from "@apollo/client";
 import App from "./App.tsx";
 import "./index.css";
 
-const cache = new InMemoryCache({
-  typePolicies: {
-    Query: {
-      fields: {
-        categories: {
-          merge(existing, incoming) {
-            return incoming;
-          },
-        },
-        teachers: {
-          merge(existing, incoming) {
-            return incoming;
-          },
-        },
-        teacherLesson: {
-          merge(existing, incoming) {
-            return incoming;
-          },
-        },
-      },
-    },
-  },
-});
+const cache = new InMemoryCache();
 
 const client = new ApolloClient({
   uri: "http://localhost:8000/graphql",

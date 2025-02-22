@@ -9,7 +9,13 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const otpGenerator = require("otp-generator");
 
-const { RegisterSuccessType, tokenType, messageType } = require("./Types");
+const {
+  RegisterInputType,
+  RegisterSuccessType,
+  tokenType,
+  messageType,
+  RegisterVerificationInputType,
+} = require("./Types");
 const Student = require("../models/Student");
 const Teacher = require("../models/Teacher");
 const { createToken, createAccessToken } = require("../utils/createToken");
@@ -67,28 +73,30 @@ const mutationFields = {
   register: {
     type: RegisterSuccessType,
     args: {
-      firstname: { type: GraphQLString },
-      lastname: { type: GraphQLString },
-      email: { type: GraphQLString },
-      password: { type: GraphQLString },
+      // firstname: { type: GraphQLString },
+      // lastname: { type: GraphQLString },
+      // email: { type: GraphQLString },
+      // password: { type: GraphQLString },
 
-      type: {
-        type: new GraphQLEnumType({
-          name: "registerType",
-          values: {
-            student: { value: "Student" },
-            teacher: { value: "Teacher" },
-          },
-        }),
-      },
+      // type: {
+      //   type: new GraphQLEnumType({
+      //     name: "registerType",
+      //     values: {
+      //       student: { value: "Student" },
+      //       teacher: { value: "Teacher" },
+      //     },
+      //   }),
+      // },
+
+      input: { type: RegisterInputType },
     },
-    async resolve(parent, args) {
+    async resolve(parent, { input }) {
       console.log("Register!!!");
       try {
-        const errors = validation(Object.entries(args));
+        const errors = validation(Object.entries(input));
         const isValid = Object.keys(errors)?.length === 0;
-        console.log("errors:", errors);
-        console.log("isValid:", isValid);
+        // console.log("errors:", errors);
+        // console.log("isValid:", isValid);
         if (!isValid) {
           throw new GraphQLError(Object.values(errors), {
             extensions: {
@@ -98,16 +106,16 @@ const mutationFields = {
           });
         }
 
-        const isTeacher = args.type === "Teacher";
-        console.log("isTeacher:", isTeacher);
+        const isTeacher = input.type === "Teacher";
+        // console.log("isTeacher:", isTeacher);
 
         let existingUser;
         if (isTeacher) {
-          existingUser = await Teacher.findOne({ email: args.email });
+          existingUser = await Teacher.findOne({ email: input.email });
         } else if (!isTeacher) {
-          existingUser = await Student.findOne({ email: args.email });
+          existingUser = await Student.findOne({ email: input.email });
         }
-        console.log("existingUser:", existingUser);
+        // console.log("existingUser:", existingUser);
 
         if (existingUser) {
           throw new GraphQLError("This user is already exist", {
@@ -117,28 +125,29 @@ const mutationFields = {
           });
         }
 
-        const hashedPassword = await bcrypt.hash(args.password, 10);
+        const hashedPassword = await bcrypt.hash(input.password, 10);
         // Create the verification token
         const verificationToken = otpGenerator.generate(6, {
           specialChars: false,
         });
         console.log("verificationToken:", verificationToken);
+        console.log("typeof verificationToken:", typeof verificationToken);
 
         let newUser;
         if (isTeacher) {
           newUser = await Teacher.create({
-            firstname: args.firstname,
-            lastname: args.lastname,
-            email: args.email,
+            firstname: input.firstname,
+            lastname: input.lastname,
+            email: input.email,
             password: hashedPassword,
             verificationEmailToken: verificationToken,
             verificationEmailExpiresAt: Date.now() + 10 * 60 * 1000, // 10 minutes
           });
         } else {
           newUser = await Student.create({
-            firstname: args.firstname,
-            lastname: args.lastname,
-            email: args.email,
+            firstname: input.firstname,
+            lastname: input.lastname,
+            email: input.email,
             password: hashedPassword,
             verificationEmailToken: verificationToken,
             verificationEmailExpiresAt: Date.now() + 10 * 60 * 1000, // 10 minutes
@@ -147,10 +156,10 @@ const mutationFields = {
           console.log("newUser:", newUser);
         }
 
-        // sending a verification email
+        // sending a verification email - uncomment this and change settings in the "../mail/emails" file to send verification email
         // SendVerificationEmail(
-        //   (userEmail = args.email),
-        //   (username = args.firstname),
+        //   (userEmail = input.email),
+        //   (username = input.firstname),
         //   (subject = "Email verification"),
         //   (verificationToken)
         // );
@@ -164,39 +173,29 @@ const mutationFields = {
     },
   },
 
-  registerVarification: {
+  registerVerification: {
     type: tokenType,
     args: {
-      userId: { type: GraphQLID },
-      type: {
-        type: new GraphQLEnumType({
-          name: "verifyType",
-          values: {
-            student: { value: "Student" },
-            teacher: { value: "Teacher" },
-          },
-        }),
-      },
-      code: { type: GraphQLString },
+      input: { type: RegisterVerificationInputType },
     },
-    async resolve(parent, args, { req, res }) {
+    async resolve(parent, { input }, { req, res }) {
       try {
-        idCheck(args.userId);
+        idCheck(input.userId);
 
         // get whether it's a student or a teacher
-        const type = args.type;
+        const type = input.type;
 
         let verifiedUser;
         if (type === "Teacher") {
           verifiedUser = await Teacher.findOne({
-            _id: args.userId,
-            verificationEmailToken: args.code,
+            _id: input.userId,
+            verificationEmailToken: input.code,
             verificationEmailExpiresAt: { $gt: Date.now() },
           });
         } else if (type === "Student") {
           verifiedUser = await Student.findOne({
-            _id: args.userId,
-            verificationEmailToken: args.code,
+            _id: input.userId,
+            verificationEmailToken: input.code,
             verificationEmailExpiresAt: { $gt: Date.now() },
           });
         }
@@ -218,7 +217,7 @@ const mutationFields = {
 
         const { accessToken, refreshToken } = createToken(
           verifiedUser,
-          args.type
+          input.type
         );
         // set the http only cookie to send the refresh token
         res.cookie("token", refreshToken, {
@@ -250,7 +249,7 @@ const mutationFields = {
       password: { type: GraphQLString },
       type: {
         type: new GraphQLEnumType({
-          name: "tokenType",
+          name: "LoginType",
           values: {
             student: { value: "Student" },
             teacher: { value: "Teacher" },

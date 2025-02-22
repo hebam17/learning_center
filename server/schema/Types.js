@@ -7,6 +7,8 @@ const {
   GraphQLList,
   GraphQLUnionType,
   GraphQLFloat,
+  GraphQLEnumType,
+  GraphQLInputObjectType,
 } = require("graphql");
 const Category = require("../models/Category");
 const Teacher = require("../models/Teacher");
@@ -76,6 +78,7 @@ const TeacherType = new GraphQLObjectType({
     about_me: { type: GraphQLString },
     salary: { type: GraphQLInt },
     isActive: { type: GraphQLBoolean },
+    verified: { type: GraphQLBoolean },
     resetPasswordToken: { type: GraphQLString },
     resetPasswordExpiresAt: { type: GraphQLInt },
     verificationPasswordToken: { type: GraphQLString },
@@ -241,8 +244,34 @@ const StudentLessonType = new GraphQLObjectType({
 });
 
 // Auth Types
+const RegisterInputType = new GraphQLInputObjectType({
+  name: "RegisterInput",
+  fields: () => ({
+    firstname: { type: GraphQLString },
+    lastname: { type: GraphQLString },
+    email: { type: GraphQLString },
+    password: { type: GraphQLString },
+    type: {
+      type: UserType,
+      defaultValue: UserType.getValue("student"),
+    },
+  }),
+});
+
+const RegisterVerificationInputType = new GraphQLInputObjectType({
+  name: "RegisterVerificationInput",
+  fields: () => ({
+    userId: { type: GraphQLID },
+    type: {
+      type: UserType,
+      defaultValue: UserType.getValue("student"),
+    },
+    code: { type: GraphQLString },
+  }),
+});
+
 const RegisterSuccessType = new GraphQLObjectType({
-  name: "Register",
+  name: "RegisterSuccess",
   fields: () => ({
     message: { type: GraphQLString },
     // id: { type: GraphQLID },
@@ -265,6 +294,14 @@ const messageType = new GraphQLObjectType({
 });
 
 const updateProfileType = StudentType | TeacherType;
+
+const UserType = new GraphQLEnumType({
+  name: "UserType",
+  values: {
+    student: { value: "Student" },
+    teacher: { value: "Teacher" },
+  },
+});
 
 const RatingType = new GraphQLObjectType({
   name: "Rating",
@@ -292,6 +329,8 @@ exports.StudentType = StudentType;
 exports.CategoryType = CategoryType;
 exports.TeacherLessonType = TeacherLessonType;
 exports.StudentLessonType = StudentLessonType;
+exports.RegisterInputType = RegisterInputType;
+exports.RegisterVerificationInputType = RegisterVerificationInputType;
 exports.RegisterSuccessType = RegisterSuccessType;
 exports.tokenType = tokenType;
 exports.messageType = messageType;

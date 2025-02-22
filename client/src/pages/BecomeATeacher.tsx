@@ -26,7 +26,7 @@ const BecomeATeacher = () => {
                 achieve their goals
               </p>
             </div>
-            <Link to="#form" className="secondary-btn">
+            <Link to="/new-teacher/create-account" className="secondary-btn">
               Get Started
             </Link>
           </div>

@@ -187,7 +187,19 @@ body {
 }
 
 .auth-image {
-  background-size: 50% 100%;
+  background-size: 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  object-fit: cover;
+  /* object-position: center; */
+  background-position: center;
+  background-attachment: fixed;
+  opacity: 0.8;
+  filter: grayscale(100%);
+}
+
+.auth-image2 {
+  background-size: 100%;
   background-repeat: no-repeat;
   object-fit: cover;
   object-position: center;
@@ -195,8 +207,12 @@ body {
 }
 
 @media only screen and (max-width: 768px) {
-  .auth-image {
+  /* .auth-image {
     background-size: cover;
     object-position: center;
+  } */
+  .login-image {
+    background-image: none;
+    @apply bg-gray-50;
   }
 }

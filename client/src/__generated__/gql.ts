@@ -11,10 +11,25 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * 3. It does not support dead code elimination, so it will add unused operations.
  *
  * Therefore it is highly recommended to use the babel or swc plugin for production.
+ * Learn more about it here: https://the-guild.dev/graphql/codegen/plugins/presets/preset-client#reducing-bundle-size
  */
-const documents = {
+type Documents = {
+    "\n  mutation Register($input: RegisterInput) {\n    register(input: $input) {\n      message\n      userId\n    }\n  }\n": typeof types.RegisterDocument,
+    "\n  mutation RegisterVerification($input: RegisterVerificationInput) {\n    registerVerification(input: $input) {\n      accessToken\n    }\n  }\n": typeof types.RegisterVerificationDocument,
+    "\n  query GetCategories {\n    categories{\n      id\n      material\n      title\n      description\n    }\n  }\n": typeof types.GetCategoriesDocument,
+    "\n    query GetCategory($id:ID!) {\n      category(id:$id){\n        id\n        material\n        title\n        description\n      }\n    }\n  ": typeof types.GetCategoryDocument,
+    "\n  query GetStudents{\n    students{\n      id\n      firstname\n      lastname\n      email\n      password\n      whishlistLessons{\n        id\n        category{\n          id\n          material\n          title\n          description\n        }\n        teacher{\n          id\n          firstname\n          lastname\n          email\n        }\n      }\n    }\n  }\n": typeof types.GetStudentsDocument,
+    "\n  query GetStudent{\n    student{\n      id\n      firstname\n      lastname\n      email\n      password\n      whishlistLessons{\n        id\n        category{\n          id\n          material\n          title\n          description\n        }\n        teacher{\n          id\n          firstname\n          lastname\n          email\n        }\n      }\n    }\n  }\n": typeof types.GetStudentDocument,
+    "\n  query AllTeachersLessons{\n    allTeachersLessons{\n      id\n      category{\n        id\n        material\n        title\n        description\n      }\n      teacher{\n        id\n        firstname\n        lastname\n        email\n        role\n        about_me\n        salary\n        isActive\n        rating\n        ratingsCount\n      }\n      students_num\n      enrolled_students_num\n      students{\n        id\n        firstname\n        lastname\n        email\n      }\n      price\n      discount\n      rating\n      ratingsCount\n      usersRate{\n        id\n      }\n      start_date\n      week_days\n      duration\n      type\n      start_time\n      end_time\n      is_full\n      description\n    }\n  }\n": typeof types.AllTeachersLessonsDocument,
+    "\n  query TeacherLessons{\n    teacherLessons{\n      id\n      category{\n        id\n        material\n        title\n        description\n      }\n      teacher{\n        id\n        firstname\n        lastname\n        email\n        role\n        about_me\n        salary\n        isActive\n        rating\n        ratingsCount\n      }\n      students_num\n      enrolled_students_num\n      students{\n        id\n        firstname\n        lastname\n        email\n      }\n      price\n      discount\n      rating\n      ratingsCount\n      usersRate{\n        id\n      }\n      start_date\n      week_days\n      duration\n      type\n      start_time\n      end_time\n      is_full\n      description\n    }\n  }\n": typeof types.TeacherLessonsDocument,
+    "\n  query GetTeachers {\n    teachers{\n      id\n      firstname\n      lastname\n      email\n      role\n      lessons_num\n      about_me\n      salary\n      isActive\n      rating\n      ratingsCount\n    }\n  }\n": typeof types.GetTeachersDocument,
+    "\n  query GetTeacher {\n    teacher{\n     id\n     firstname\n     lastname\n     email\n     role\n     lessons_num\n     about_me\n     salary\n     isActive\n     rating\n     ratingsCount\n    }\n  }\n": typeof types.GetTeacherDocument,
+};
+const documents: Documents = {
+    "\n  mutation Register($input: RegisterInput) {\n    register(input: $input) {\n      message\n      userId\n    }\n  }\n": types.RegisterDocument,
+    "\n  mutation RegisterVerification($input: RegisterVerificationInput) {\n    registerVerification(input: $input) {\n      accessToken\n    }\n  }\n": types.RegisterVerificationDocument,
     "\n  query GetCategories {\n    categories{\n      id\n      material\n      title\n      description\n    }\n  }\n": types.GetCategoriesDocument,
-    "\n    query GetCategory {\n      category{\n        id\n        material\n        title\n        description\n      }\n    }\n  ": types.GetCategoryDocument,
+    "\n    query GetCategory($id:ID!) {\n      category(id:$id){\n        id\n        material\n        title\n        description\n      }\n    }\n  ": types.GetCategoryDocument,
     "\n  query GetStudents{\n    students{\n      id\n      firstname\n      lastname\n      email\n      password\n      whishlistLessons{\n        id\n        category{\n          id\n          material\n          title\n          description\n        }\n        teacher{\n          id\n          firstname\n          lastname\n          email\n        }\n      }\n    }\n  }\n": types.GetStudentsDocument,
     "\n  query GetStudent{\n    student{\n      id\n      firstname\n      lastname\n      email\n      password\n      whishlistLessons{\n        id\n        category{\n          id\n          material\n          title\n          description\n        }\n        teacher{\n          id\n          firstname\n          lastname\n          email\n        }\n      }\n    }\n  }\n": types.GetStudentDocument,
     "\n  query AllTeachersLessons{\n    allTeachersLessons{\n      id\n      category{\n        id\n        material\n        title\n        description\n      }\n      teacher{\n        id\n        firstname\n        lastname\n        email\n        role\n        about_me\n        salary\n        isActive\n        rating\n        ratingsCount\n      }\n      students_num\n      enrolled_students_num\n      students{\n        id\n        firstname\n        lastname\n        email\n      }\n      price\n      discount\n      rating\n      ratingsCount\n      usersRate{\n        id\n      }\n      start_date\n      week_days\n      duration\n      type\n      start_time\n      end_time\n      is_full\n      description\n    }\n  }\n": types.AllTeachersLessonsDocument,
@@ -40,11 +55,19 @@ export function gql(source: string): unknown;
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
+export function gql(source: "\n  mutation Register($input: RegisterInput) {\n    register(input: $input) {\n      message\n      userId\n    }\n  }\n"): (typeof documents)["\n  mutation Register($input: RegisterInput) {\n    register(input: $input) {\n      message\n      userId\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  mutation RegisterVerification($input: RegisterVerificationInput) {\n    registerVerification(input: $input) {\n      accessToken\n    }\n  }\n"): (typeof documents)["\n  mutation RegisterVerification($input: RegisterVerificationInput) {\n    registerVerification(input: $input) {\n      accessToken\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
 export function gql(source: "\n  query GetCategories {\n    categories{\n      id\n      material\n      title\n      description\n    }\n  }\n"): (typeof documents)["\n  query GetCategories {\n    categories{\n      id\n      material\n      title\n      description\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n    query GetCategory {\n      category{\n        id\n        material\n        title\n        description\n      }\n    }\n  "): (typeof documents)["\n    query GetCategory {\n      category{\n        id\n        material\n        title\n        description\n      }\n    }\n  "];
+export function gql(source: "\n    query GetCategory($id:ID!) {\n      category(id:$id){\n        id\n        material\n        title\n        description\n      }\n    }\n  "): (typeof documents)["\n    query GetCategory($id:ID!) {\n      category(id:$id){\n        id\n        material\n        title\n        description\n      }\n    }\n  "];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

@@ -41,6 +41,10 @@ const TeacherSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    verified: {
+      type: Boolean,
+      default: false,
+    },
     resetPasswordToken: String,
     resetPasswordExpiresAt: Date,
     verificationEmailToken: String,

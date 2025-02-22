@@ -17,7 +17,7 @@ export default function Footer() {
             </p>
             <div className="mt-4 flex gap-4 flex-wrap sm:justify-start justify-center">
               <Link
-                to="/login"
+                to="/signup"
                 className="text-white py-2 px-3 whitespace-nowrap bg-primary-500 text-sm p-2 rounded-sm hover:bg-white hover:text-primary-500 transition-all duration-500 font-semibold"
               >
                 Join The Family

@@ -12,6 +12,7 @@ import CustomLayout from "./pages/CustomLayout";
 import Login from "./pages/Login";
 import BecomeATeacher from "./pages/BecomeATeacher";
 import CreateNewTeacher from "./pages/CreateNewTeacher";
+import RegisterVerification from "./pages/RegisterVerification";
 
 function App() {
   const router = createBrowserRouter([
@@ -26,6 +27,10 @@ function App() {
         {
           path: "/login",
           element: <Login />,
+        },
+        {
+          path: "/register-verification",
+          element: <RegisterVerification />,
         },
       ],
     },

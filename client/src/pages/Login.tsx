@@ -69,21 +69,23 @@ const Login = () => {
   };
 
   return (
-    <div className="m-0 p-0 flex md:justify-end justify-center min-h-screen auth-image login-image">
-      <div className="flex-grow flex flex-col mt-4 px-12 justify-center md:w-[50%] w-full items-center border border-black">
+    <div className="m-0 p-0 flex justify-center min-h-screen relative">
+      <div className="auth-image login-image absolute top-0 left-0 w-full h-full z-[-1] hidden sm:block"></div>
+
+      <div className="flex-grow flex flex-col pt-4 px-12 justify-center md:w-[50%] w-full items-center bg-transparent">
         {/* Title */}
-        <div className="md:mt-4 md:mb-8 mt-[10vh] mb-5 w-full flex flex-col items-center lg:text-sm">
-          <h1 className="md:text-2xl text-xl md:text-primary-500 text-gray-900 font-semibold mb-3">
+        <div className="md:mt-4 md:mb-5 mt-[10vh] mb-5 w-full flex flex-col items-center lg:text-sm">
+          <h1 className="md:text-3xl text-2xl text-primary-500 font-semibold text-center">
             Welcome back, You have been missed!
           </h1>
         </div>
         {/* ////////// */}
 
         {/* THE FORM */}
-        <div className="w-full flex flex-col md:items-end items-center">
+        <div className="w-full flex flex-col items-center">
           <form onSubmit={handleSubmit} className="md:w-[50%] p-6">
             {/* email */}
-            <div className="auth-input w-fit h-fit">
+            <div className="auth-input w-full h-fit">
               <label htmlFor="email">Email</label>
               <input
                 type="email"
@@ -100,7 +102,7 @@ const Login = () => {
             {/* password */}
             <div className="auth-input">
               <label htmlFor="password">Password</label>
-              <div className="relative w-fit h-fit">
+              <div className="relative w-full h-fit">
                 <input
                   type="password"
                   id="password"
@@ -108,6 +110,7 @@ const Login = () => {
                   value={password}
                   placeholder="Password"
                   ref={passRef}
+                  className="w-full"
                   required
                 />
 

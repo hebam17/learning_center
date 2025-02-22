@@ -234,6 +234,56 @@ const mutationFields = {
       }
     },
   },
+
+  verifyATeacher: {
+    type: TeacherType,
+    args: {
+      managerId: { type: GraphQLID },
+      teacherId: { type: GraphQLID },
+      isActive: { type: GraphQLBoolean },
+      verified: { type: GraphQLBoolean },
+    },
+    async resolve(parent, args, { req, res }) {
+      try {
+        idCheck(args.managerId);
+        idCheck(args.teacherId);
+        const { isActive, verified } = args;
+        const { isAuth, user } = req.raw;
+        if (
+          !isAuth ||
+          !user ||
+          user?.userId !== args.managerId ||
+          !user?.roles.includes("Manager")
+        )
+          throw new GraphQLError("You are unauthorized!", {
+            extensions: {
+              code: "UNAUTHORIZED",
+              http: { status: 401 },
+            },
+          });
+
+        const teacher = await Teacher.findById(args.teacherId);
+        if (!teacher)
+          throw new GraphQLError("This teacher was not found!", {
+            extensions: {
+              code: "NOTFOUND",
+              http: { status: 404 },
+            },
+          });
+
+        return Teacher.findByIdAndUpdate(
+          args.teacherId,
+          {
+            $set: {
+              isActive: isActive || teacher.isActive,
+              verified: verified || teacher.verified,
+            },
+          },
+          { new: true }
+        );
+      } catch (error) {}
+    },
+  },
 };
 
 exports.queryFields = queryFields;

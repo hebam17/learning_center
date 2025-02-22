@@ -20,8 +20,8 @@ const CustomLayout = () => {
       : `mobile-link ${classes}`;
 
   return (
-    <div className="md:h-screen bg-white md:overflow-y-hidden">
-      <nav className="py-2 px-4 fixed top-0 left-0 w-full bg-white z-10 flex justify-between items-center text-gray-800 font-semibold text-base">
+    <div className="md:h-screen bg-transparent md:overflow-y-hidden">
+      <nav className="py-2 px-4 fixed top-0 left-0 w-full bg-transparent z-10 flex justify-between items-center text-gray-800 font-semibold text-base">
         {/* LARGE SCREEN NAVIGATION  */}
         {/* LEFT SIDE LINKS */}
         <div className="block">

@@ -12,6 +12,9 @@ const config: CodegenConfig = {
         gqlTagName: "gql",
       },
     },
+    "./src/__generated__/types.ts": {
+      plugins: ["typescript", "typescript-operations"],
+    },
   },
   ignoreNoDocuments: true,
 };

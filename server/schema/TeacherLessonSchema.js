@@ -162,10 +162,31 @@ const mutationFields = {
       is_full: { type: GraphQLBoolean },
       description: { type: GraphQLString },
     },
-    resolve(parent, args) {
+    async resolve(parent, args) {
       try {
         idCheck(args.categoryId);
         idCheck(args.teacherId);
+
+        const teacher = await Teacher.findById(args.teacherId);
+
+        if (!teacher)
+          throw new GraphQLError("This teacher couldn't be found!", {
+            extensions: {
+              code: "NOT FOUND",
+              http: { status: 404 },
+            },
+          });
+
+        if (!teacher.isActive || !teacher.verified)
+          throw new GraphQLError(
+            "This teacher is not allowed yet to create a lesson, as his accound to verified or active!",
+            {
+              extensions: {
+                code: "UNAUTHORIZED",
+                http: { status: 401 },
+              },
+            }
+          );
 
         // Create a date object from ISO date string
         const startDate = new Date(args.start_date);
