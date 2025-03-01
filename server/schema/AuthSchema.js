@@ -12,9 +12,10 @@ const otpGenerator = require("otp-generator");
 const {
   RegisterInputType,
   RegisterSuccessType,
-  tokenType,
-  messageType,
+  TokenType,
+  MessageType,
   RegisterVerificationInputType,
+  UserType,
 } = require("./Types");
 const Student = require("../models/Student");
 const Teacher = require("../models/Teacher");
@@ -24,7 +25,7 @@ const { errorHandler, idCheck } = require("../utils/errorHandler");
 
 const queryFields = {
   refresh: {
-    type: tokenType,
+    type: TokenType,
 
     async resolve(parent, args, { req, res }) {
       try {
@@ -174,7 +175,7 @@ const mutationFields = {
   },
 
   registerVerification: {
-    type: tokenType,
+    type: TokenType,
     args: {
       input: { type: RegisterVerificationInputType },
     },
@@ -243,18 +244,13 @@ const mutationFields = {
   },
 
   login: {
-    type: tokenType,
+    type: TokenType,
     args: {
       email: { type: GraphQLString },
       password: { type: GraphQLString },
       type: {
-        type: new GraphQLEnumType({
-          name: "LoginType",
-          values: {
-            student: { value: "Student" },
-            teacher: { value: "Teacher" },
-          },
-        }),
+        type: UserType,
+        defaultValue: UserType.getValue("student"),
       },
     },
     async resolve(parent, args, { req, res }) {
@@ -318,17 +314,12 @@ const mutationFields = {
   },
 
   logout: {
-    type: messageType,
+    type: MessageType,
     args: {
       userId: { type: GraphQLID },
       type: {
-        type: new GraphQLEnumType({
-          name: "logoutType",
-          values: {
-            student: { value: "Student" },
-            teacher: { value: "Teacher" },
-          },
-        }),
+        type: UserType,
+        defaultValue: UserType.getValue("student"),
       },
     },
 
@@ -355,7 +346,7 @@ const mutationFields = {
   },
 
   forgetPassword: {
-    type: messageType,
+    type: MessageType,
     args: {
       email: { type: GraphQLString },
       type: {
@@ -430,7 +421,7 @@ const mutationFields = {
     },
   },
   resetPassword: {
-    type: messageType,
+    type: MessageType,
     args: {
       email: { type: GraphQLString },
       code: { type: GraphQLString },

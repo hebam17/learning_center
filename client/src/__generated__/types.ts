@@ -22,11 +22,6 @@ export type Category = {
   title?: Maybe<Scalars['String']['output']>;
 };
 
-export enum LoginType {
-  Student = 'student',
-  Teacher = 'teacher'
-}
-
 export type Message = {
   __typename?: 'Message';
   message?: Maybe<Scalars['String']['output']>;
@@ -127,12 +122,12 @@ export type MutationForgetPasswordArgs = {
 export type MutationLoginArgs = {
   email?: InputMaybe<Scalars['String']['input']>;
   password?: InputMaybe<Scalars['String']['input']>;
-  type?: InputMaybe<LoginType>;
+  type?: InputMaybe<UserType>;
 };
 
 
 export type MutationLogoutArgs = {
-  type?: InputMaybe<LogoutType>;
+  type?: InputMaybe<UserType>;
   userId?: InputMaybe<Scalars['ID']['input']>;
 };
 
@@ -408,11 +403,6 @@ export enum LessonStatus {
   Progress = 'progress'
 }
 
-export enum LogoutType {
-  Student = 'student',
-  Teacher = 'teacher'
-}
-
 export enum Material {
   Arabic = 'arabic',
   Biology = 'biology',
@@ -475,6 +465,23 @@ export type RegisterVerificationMutationVariables = Exact<{
 
 
 export type RegisterVerificationMutation = { __typename?: 'Mutation', registerVerification?: { __typename?: 'Token', accessToken?: string | null } | null };
+
+export type LoginMutationVariables = Exact<{
+  email?: InputMaybe<Scalars['String']['input']>;
+  password?: InputMaybe<Scalars['String']['input']>;
+  type?: InputMaybe<UserType>;
+}>;
+
+
+export type LoginMutation = { __typename?: 'Mutation', login?: { __typename?: 'Token', accessToken?: string | null } | null };
+
+export type LogoutMutationVariables = Exact<{
+  userId?: InputMaybe<Scalars['ID']['input']>;
+  type?: InputMaybe<UserType>;
+}>;
+
+
+export type LogoutMutation = { __typename?: 'Mutation', logout?: { __typename?: 'Message', message?: string | null } | null };
 
 export type GetCategoriesQueryVariables = Exact<{ [key: string]: never; }>;
 

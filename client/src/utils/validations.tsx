@@ -8,11 +8,11 @@ interface Errors {
 }
 
 type UserData = {
-  firstname: string;
-  lastname: string;
+  firstname?: string;
+  lastname?: string;
   email: string;
   password: string;
-  confirmPassword: string;
+  confirmPassword?: string;
 };
 
 type ResetPassword = {
@@ -49,31 +49,37 @@ export const validation = (userData: UserData) => {
   }
 
   // password validation - make sure both password and confirm password identical
-  if (userData["password"] !== userData["confirmPassword"]) {
+  if (
+    userData["confirmPassword"] &&
+    userData["password"] !== userData["confirmPassword"]
+  ) {
     errors["confirmPassword"] = "Password and confirm password should match!";
   }
   return errors;
 };
 
-// Login validation
-export const loginValidation = (userData: UserData) => {
-  const errors: Errors = {};
-  const data: [string, string][] = Object.entries(userData);
+// // Login validation
+// export const loginValidation = (userData: UserData) => {
+//   const errors: Errors = {};
+//   const data: [string, string][] = Object.entries(userData);
 
-  const specialCharsRegexp = /[`!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?~]/;
+//   const specialCharsRegexp = /[`!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?~]/;
 
-  for (const [key, value] of data) {
-    if (!value.trim()) {
-      errors[key] = `${key} required!`;
-    } else if (value.trim().includes(" ")) {
-      errors[key] = `You can't have a space in ${key}`;
-    } else if (key === "username" && specialCharsRegexp.test(value)) {
-      errors[key] = "No special characters allowed";
-    }
-  }
+//   for (const [key, value] of data) {
+//     if (!value.trim()) {
+//       errors[key] = `${key} required!`;
+//     } else if (value.trim().includes(" ")) {
+//       errors[key] = `You can't have a space in ${key}`;
+//     } else if (key === "email" && !emailRegexp.test(value)) {
+//       errors[key] = "This email format is not supported!";
+//     }
+//     // else if (key === "username" && specialCharsRegexp.test(value)) {
+//     //   errors[key] = "No special characters allowed";
+//     // }
+//   }
 
-  return errors;
-};
+//   return errors;
+// };
 
 // Reset password validation
 export const ResetPasswordValidation = (resetData: ResetPassword) => {

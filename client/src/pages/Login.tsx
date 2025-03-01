@@ -1,26 +1,39 @@
+import { useMutation } from "@apollo/client";
 import { useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { LOGIN } from "../graphql/mutation/authMutations";
+import { UserType } from "../__generated__/graphql";
+import { validation } from "../utils/validations";
 
 const Login = () => {
-  const userRef = useRef();
-  const errRef = useRef();
+  const errRef = useRef<HTMLParagraphElement>(null);
   const passRef = useRef<HTMLInputElement>(null);
-  const confPassRef = useRef<HTMLInputElement>(null);
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [confirmPassword, setConfirmPassword] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [passvisible, setPassvisible] = useState<boolean>(false);
-  const [confPassVisible, setConfPassVisible] = useState<boolean>(false);
+  const navigate = useNavigate();
 
-  const handleFnameChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    setFirstName(e.target.value);
-  };
-  const handleLnameChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    setLastName(e.target.value);
-  };
+  const [login, { loading, error, data }] = useMutation(LOGIN, {
+    variables: {
+      email,
+      password,
+      type: UserType.Student,
+    },
+    onCompleted: ({ login }) => {
+      setErrorMessage("");
+      console.log("login data:", login);
+
+      navigate("/", {
+        replace: true,
+        state: {
+          data: login?.data,
+          type: UserType.Student,
+        },
+      });
+    },
+  });
+
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setEmail(e.target.value);
   };
@@ -28,12 +41,6 @@ const Login = () => {
     e: React.ChangeEvent<HTMLInputElement>
   ): void => {
     setPassword(e.target.value);
-  };
-
-  const handleConfPassChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ): void => {
-    setConfirmPassword(e.target.value);
   };
 
   // To show/hide password on eye icon click
@@ -50,22 +57,37 @@ const Login = () => {
     });
   };
 
-  // To show/hide confirm password on eye icon click
-  const handleConfPassVisibility = () => {
-    setConfPassVisible((prev: boolean) => {
-      if (confPassRef !== null && confPassRef.current !== null) {
-        if (prev) {
-          confPassRef.current.type = "password";
-        } else {
-          confPassRef.current.type = "text";
-        }
-      }
-      return !prev;
-    });
-  };
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    try {
+      const validationErrors = validation({
+        email,
+        password,
+      });
+
+      console.log("validationErrors:", validationErrors);
+
+      setErrorMessage(validationErrors[Object.keys(validationErrors)[0]]);
+
+      if (errRef !== null && errRef.current !== null) errRef?.current?.focus();
+
+      // // If no errors were found let's register
+      // if (Object.keys(validationErrors).length === 0) {
+      //   const result = await login();
+      //   console.log("result:", result);
+      //   setErrorMessage(null);
+      //   navigate("/", {
+      //     replace: true,
+      //     state: {
+      //       data: result?.data,
+      //       type: UserType.Student,
+      //     },
+      //   });
+      // }
+      login();
+    } catch (error) {
+      console.log("error:", error);
+    }
   };
 
   return (
@@ -84,6 +106,15 @@ const Login = () => {
         {/* THE FORM */}
         <div className="w-full flex flex-col items-center">
           <form onSubmit={handleSubmit} className="md:w-[50%] p-6">
+            {/* Error Element */}
+            {errorMessage && (
+              <p
+                ref={errRef}
+                className="bg-error-500 mb-5 p-2 text-white rounded-sm"
+              >
+                {errorMessage}
+              </p>
+            )}
             {/* email */}
             <div className="auth-input w-full h-fit">
               <label htmlFor="email">Email</label>

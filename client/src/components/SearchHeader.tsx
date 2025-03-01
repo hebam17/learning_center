@@ -1,4 +1,4 @@
-import { useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import Logo from "./Logo";
 import { GET_CATEGORIES } from "../graphql/queries/CategoryQueries";
 import { ChangeEvent, ReactElement, useEffect, useRef, useState } from "react";
@@ -12,6 +12,8 @@ import {
 import { GET_TEACHERS } from "../graphql/queries/TeachersQueries";
 import DatalistInput from "react-datalist-input";
 import "react-datalist-input/dist/styles.css";
+import { UserType } from "../__generated__/graphql";
+import { LOGOUT } from "../graphql/mutation/authMutations";
 
 export default function SearchHeader() {
   const {
@@ -29,12 +31,47 @@ export default function SearchHeader() {
 
   const [categoryId, setcategoryId] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string>("");
+
   const dropDownRef = useRef<HTMLDivElement>(null);
 
   // FOR TESTING
-  const isLoggedIn: boolean = false;
+  const isLoggedIn: boolean = true;
   const username: string = "Jane Doe";
   const userId: string = "jkdslauf0eisurike3jwrl";
+
+  // To navigate the user to the category's page when selected
+  useEffect(() => {
+    // Test the new path against the current path and only redirect when it's not the same
+    const newPath =
+      categoryId === ""
+        ? location.pathname
+        : categoryId === "all"
+        ? "categories"
+        : `/categories/${categoryId}`;
+    const match = matchPath({ path: newPath }, location.pathname);
+    console.log("match:", match);
+    if (match === null) return navigate(newPath);
+  }, [categoryId, location.pathname, navigate]);
+
+  const [logout] = useMutation(LOGOUT, {
+    variables: {
+      userId: "6707bb7c0d28904d4b66678b",
+      type: UserType.Student,
+    },
+    onCompleted: ({ logout }) => {
+      setErrorMessage("");
+      console.log("logout data:", logout);
+
+      navigate("/", {
+        replace: true,
+        state: {
+          data: logout?.data,
+          type: UserType.Student,
+        },
+      });
+    },
+  });
 
   // Create the category options for the dropdown filter
   const categories: ReactElement[] =
@@ -88,20 +125,9 @@ export default function SearchHeader() {
     }
   };
 
-  // To navigate the user to the category's page when selected
-  useEffect(() => {
-    // Test the new path against the current path and only redirect when it's not the same
-    const newPath =
-      categoryId === ""
-        ? location.pathname
-        : categoryId === "all"
-        ? "categories"
-        : `/categories/${categoryId}`;
-    const match = matchPath({ path: newPath }, location.pathname);
-    console.log("match:", match);
-    if (match === null) return navigate(newPath);
-  }, [categoryId, location.pathname, navigate]);
-
+  const logoutHandler = () => {
+    logout();
+  };
   return (
     <>
       {/* LARGE SCREEN NAVIGATION */}
@@ -202,12 +228,12 @@ export default function SearchHeader() {
               >
                 Profile
               </Link>
-              <Link
-                to="/logout"
+              <button
+                onClick={logoutHandler}
                 className="py-2 px-4 text-base bg-white text-primary-500 hover:bg-primary-500 hover:text-white"
               >
                 Logout
-              </Link>
+              </button>
             </div>
           </div>
         )}

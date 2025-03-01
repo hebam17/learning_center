@@ -17,3 +17,19 @@ export const REGISTER_VERIFICATION = gql`
     }
   }
 `;
+
+export const LOGIN = gql`
+  mutation Login($email: String, $password: String, $type: UserType) {
+    login(email: $email, password: $password, type: $type) {
+      accessToken
+    }
+  }
+`;
+
+export const LOGOUT = gql`
+  mutation Logout($userId: ID, $type: UserType) {
+    logout(userId: $userId, type: $type) {
+      message
+    }
+  }
+`;

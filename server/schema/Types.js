@@ -279,14 +279,14 @@ const RegisterSuccessType = new GraphQLObjectType({
   }),
 });
 
-const tokenType = new GraphQLObjectType({
+const TokenType = new GraphQLObjectType({
   name: "Token",
   fields: () => ({
     accessToken: { type: GraphQLString },
   }),
 });
 
-const messageType = new GraphQLObjectType({
+const MessageType = new GraphQLObjectType({
   name: "Message",
   fields: () => ({
     message: { type: GraphQLString },
@@ -332,6 +332,7 @@ exports.StudentLessonType = StudentLessonType;
 exports.RegisterInputType = RegisterInputType;
 exports.RegisterVerificationInputType = RegisterVerificationInputType;
 exports.RegisterSuccessType = RegisterSuccessType;
-exports.tokenType = tokenType;
-exports.messageType = messageType;
+exports.UserType = UserType;
+exports.TokenType = TokenType;
+exports.MessageType = MessageType;
 exports.RateType = RateType;

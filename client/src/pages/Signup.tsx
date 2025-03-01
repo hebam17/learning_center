@@ -153,7 +153,7 @@ const Signup = () => {
             </p>
           )}
           {/* fullname */}
-          <div className="flex md:flex-row flex-col justify-around md:items-center items-left gap-4">
+          <div className="flex sm:flex-row flex-col justify-around md:items-center items-left gap-4">
             {/* fname */}
 
             <div className="auth-input">
@@ -198,7 +198,7 @@ const Signup = () => {
           </div>
           {/* //////////// */}
 
-          <div className="flex md:flex-row flex-col justify-around md:items-center items-stretch gap-4 w-full">
+          <div className="flex sm:flex-row flex-col justify-around md:items-center items-stretch gap-4 w-full">
             {/* password */}
             <div className="auth-input">
               <label htmlFor="password">Password</label>

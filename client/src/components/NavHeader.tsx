@@ -1,17 +1,48 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import Logo from "./Logo";
 import { useState } from "react";
+import { LOGOUT } from "../graphql/mutation/authMutations";
+import { useMutation } from "@apollo/client";
+import { Message, UserType } from "../__generated__/graphql";
 
 export default function NavHeader() {
   const screenLinkClass = (isActive: boolean): string =>
     isActive ? "screen-link active-screen-link" : "screen-link";
 
-  const isLoggedIn: boolean = false;
+  const isLoggedIn: boolean = true;
 
   const mobileLinkClass = (isActive: boolean): string =>
     isActive ? "mobile-link active-mobile-link" : "mobile-link";
 
+  const navigate = useNavigate();
+
   const [navOpen, setNavOpen] = useState<boolean>(false);
+
+  const [errorMessage, setErrorMessage] = useState<string>("");
+
+  const [logout, { loading, error, data }] = useMutation(LOGOUT, {
+    variables: {
+      userId: "6707bb7c0d28904d4b66678b",
+      type: UserType.Student,
+    },
+    onCompleted: ({ logout }) => {
+      setErrorMessage("");
+      setNavOpen(false);
+      console.log("logout data:", logout);
+
+      navigate("/", {
+        replace: true,
+        state: {
+          data: logout?.data,
+          type: UserType.Student,
+        },
+      });
+    },
+  });
+
+  const logoutHandler = () => {
+    logout();
+  };
 
   return (
     <nav className="sticky top-0 z-10">
@@ -168,7 +199,7 @@ export default function NavHeader() {
               </NavLink>
             </div>
 
-            {!isLoggedIn && (
+            {!isLoggedIn ? (
               <>
                 <div className="border-b-1 border-gray-500">
                   <NavLink
@@ -195,6 +226,15 @@ export default function NavHeader() {
                   </NavLink>
                 </div>
               </>
+            ) : (
+              <div className="border-b-1 border-gray-500">
+                <button
+                  onClick={logoutHandler}
+                  className={mobileLinkClass(false)}
+                >
+                  Logout
+                </button>
+              </div>
             )}
           </div>
         </div>

@@ -16,6 +16,8 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
 type Documents = {
     "\n  mutation Register($input: RegisterInput) {\n    register(input: $input) {\n      message\n      userId\n    }\n  }\n": typeof types.RegisterDocument,
     "\n  mutation RegisterVerification($input: RegisterVerificationInput) {\n    registerVerification(input: $input) {\n      accessToken\n    }\n  }\n": typeof types.RegisterVerificationDocument,
+    "\n  mutation Login($email: String, $password: String, $type: UserType) {\n    login(email: $email, password: $password, type: $type) {\n      accessToken\n    }\n  }\n": typeof types.LoginDocument,
+    "\n  mutation Logout($userId: ID, $type: UserType) {\n    logout(userId: $userId, type: $type) {\n      message\n    }\n  }\n": typeof types.LogoutDocument,
     "\n  query GetCategories {\n    categories{\n      id\n      material\n      title\n      description\n    }\n  }\n": typeof types.GetCategoriesDocument,
     "\n    query GetCategory($id:ID!) {\n      category(id:$id){\n        id\n        material\n        title\n        description\n      }\n    }\n  ": typeof types.GetCategoryDocument,
     "\n  query GetStudents{\n    students{\n      id\n      firstname\n      lastname\n      email\n      password\n      whishlistLessons{\n        id\n        category{\n          id\n          material\n          title\n          description\n        }\n        teacher{\n          id\n          firstname\n          lastname\n          email\n        }\n      }\n    }\n  }\n": typeof types.GetStudentsDocument,
@@ -28,6 +30,8 @@ type Documents = {
 const documents: Documents = {
     "\n  mutation Register($input: RegisterInput) {\n    register(input: $input) {\n      message\n      userId\n    }\n  }\n": types.RegisterDocument,
     "\n  mutation RegisterVerification($input: RegisterVerificationInput) {\n    registerVerification(input: $input) {\n      accessToken\n    }\n  }\n": types.RegisterVerificationDocument,
+    "\n  mutation Login($email: String, $password: String, $type: UserType) {\n    login(email: $email, password: $password, type: $type) {\n      accessToken\n    }\n  }\n": types.LoginDocument,
+    "\n  mutation Logout($userId: ID, $type: UserType) {\n    logout(userId: $userId, type: $type) {\n      message\n    }\n  }\n": types.LogoutDocument,
     "\n  query GetCategories {\n    categories{\n      id\n      material\n      title\n      description\n    }\n  }\n": types.GetCategoriesDocument,
     "\n    query GetCategory($id:ID!) {\n      category(id:$id){\n        id\n        material\n        title\n        description\n      }\n    }\n  ": types.GetCategoryDocument,
     "\n  query GetStudents{\n    students{\n      id\n      firstname\n      lastname\n      email\n      password\n      whishlistLessons{\n        id\n        category{\n          id\n          material\n          title\n          description\n        }\n        teacher{\n          id\n          firstname\n          lastname\n          email\n        }\n      }\n    }\n  }\n": types.GetStudentsDocument,
@@ -60,6 +64,14 @@ export function gql(source: "\n  mutation Register($input: RegisterInput) {\n   
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\n  mutation RegisterVerification($input: RegisterVerificationInput) {\n    registerVerification(input: $input) {\n      accessToken\n    }\n  }\n"): (typeof documents)["\n  mutation RegisterVerification($input: RegisterVerificationInput) {\n    registerVerification(input: $input) {\n      accessToken\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  mutation Login($email: String, $password: String, $type: UserType) {\n    login(email: $email, password: $password, type: $type) {\n      accessToken\n    }\n  }\n"): (typeof documents)["\n  mutation Login($email: String, $password: String, $type: UserType) {\n    login(email: $email, password: $password, type: $type) {\n      accessToken\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  mutation Logout($userId: ID, $type: UserType) {\n    logout(userId: $userId, type: $type) {\n      message\n    }\n  }\n"): (typeof documents)["\n  mutation Logout($userId: ID, $type: UserType) {\n    logout(userId: $userId, type: $type) {\n      message\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
