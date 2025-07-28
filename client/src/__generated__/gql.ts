@@ -18,6 +18,10 @@ type Documents = {
     "\n  mutation RegisterVerification($input: RegisterVerificationInput) {\n    registerVerification(input: $input) {\n      accessToken\n    }\n  }\n": typeof types.RegisterVerificationDocument,
     "\n  mutation Login($email: String, $password: String, $type: UserType) {\n    login(email: $email, password: $password, type: $type) {\n      accessToken\n    }\n  }\n": typeof types.LoginDocument,
     "\n  mutation Logout($userId: ID, $type: UserType) {\n    logout(userId: $userId, type: $type) {\n      message\n    }\n  }\n": typeof types.LogoutDocument,
+    "\n  mutation ForgetPassword($email: String, $type: UserType) {\n    forgetPassword(email: $email, type: $type) {\n      message\n    }\n  }\n": typeof types.ForgetPasswordDocument,
+    "\n  mutation VerifyOTP($email: String, $code: String, $type: UserType) {\n    verifyOTP(email: $email, code: $code, type: $type) {\n      message\n    }\n  }\n": typeof types.VerifyOtpDocument,
+    "\n  mutation ResetPassword(\n    $email: String\n    $code: String\n    $newPassword: String\n    $type: UserType\n  ) {\n    resetPassword(\n      email: $email\n      code: $code\n      newPassword: $newPassword\n      type: $type\n    ) {\n      message\n    }\n  }\n": typeof types.ResetPasswordDocument,
+    "\n  query RefreshQuery{\n    refresh{\n      accessToken\n    }\n  }\n": typeof types.RefreshQueryDocument,
     "\n  query GetCategories {\n    categories{\n      id\n      material\n      title\n      description\n    }\n  }\n": typeof types.GetCategoriesDocument,
     "\n    query GetCategory($id:ID!) {\n      category(id:$id){\n        id\n        material\n        title\n        description\n      }\n    }\n  ": typeof types.GetCategoryDocument,
     "\n  query GetStudents{\n    students{\n      id\n      firstname\n      lastname\n      email\n      password\n      whishlistLessons{\n        id\n        category{\n          id\n          material\n          title\n          description\n        }\n        teacher{\n          id\n          firstname\n          lastname\n          email\n        }\n      }\n    }\n  }\n": typeof types.GetStudentsDocument,
@@ -32,6 +36,10 @@ const documents: Documents = {
     "\n  mutation RegisterVerification($input: RegisterVerificationInput) {\n    registerVerification(input: $input) {\n      accessToken\n    }\n  }\n": types.RegisterVerificationDocument,
     "\n  mutation Login($email: String, $password: String, $type: UserType) {\n    login(email: $email, password: $password, type: $type) {\n      accessToken\n    }\n  }\n": types.LoginDocument,
     "\n  mutation Logout($userId: ID, $type: UserType) {\n    logout(userId: $userId, type: $type) {\n      message\n    }\n  }\n": types.LogoutDocument,
+    "\n  mutation ForgetPassword($email: String, $type: UserType) {\n    forgetPassword(email: $email, type: $type) {\n      message\n    }\n  }\n": types.ForgetPasswordDocument,
+    "\n  mutation VerifyOTP($email: String, $code: String, $type: UserType) {\n    verifyOTP(email: $email, code: $code, type: $type) {\n      message\n    }\n  }\n": types.VerifyOtpDocument,
+    "\n  mutation ResetPassword(\n    $email: String\n    $code: String\n    $newPassword: String\n    $type: UserType\n  ) {\n    resetPassword(\n      email: $email\n      code: $code\n      newPassword: $newPassword\n      type: $type\n    ) {\n      message\n    }\n  }\n": types.ResetPasswordDocument,
+    "\n  query RefreshQuery{\n    refresh{\n      accessToken\n    }\n  }\n": types.RefreshQueryDocument,
     "\n  query GetCategories {\n    categories{\n      id\n      material\n      title\n      description\n    }\n  }\n": types.GetCategoriesDocument,
     "\n    query GetCategory($id:ID!) {\n      category(id:$id){\n        id\n        material\n        title\n        description\n      }\n    }\n  ": types.GetCategoryDocument,
     "\n  query GetStudents{\n    students{\n      id\n      firstname\n      lastname\n      email\n      password\n      whishlistLessons{\n        id\n        category{\n          id\n          material\n          title\n          description\n        }\n        teacher{\n          id\n          firstname\n          lastname\n          email\n        }\n      }\n    }\n  }\n": types.GetStudentsDocument,
@@ -72,6 +80,22 @@ export function gql(source: "\n  mutation Login($email: String, $password: Strin
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\n  mutation Logout($userId: ID, $type: UserType) {\n    logout(userId: $userId, type: $type) {\n      message\n    }\n  }\n"): (typeof documents)["\n  mutation Logout($userId: ID, $type: UserType) {\n    logout(userId: $userId, type: $type) {\n      message\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  mutation ForgetPassword($email: String, $type: UserType) {\n    forgetPassword(email: $email, type: $type) {\n      message\n    }\n  }\n"): (typeof documents)["\n  mutation ForgetPassword($email: String, $type: UserType) {\n    forgetPassword(email: $email, type: $type) {\n      message\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  mutation VerifyOTP($email: String, $code: String, $type: UserType) {\n    verifyOTP(email: $email, code: $code, type: $type) {\n      message\n    }\n  }\n"): (typeof documents)["\n  mutation VerifyOTP($email: String, $code: String, $type: UserType) {\n    verifyOTP(email: $email, code: $code, type: $type) {\n      message\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  mutation ResetPassword(\n    $email: String\n    $code: String\n    $newPassword: String\n    $type: UserType\n  ) {\n    resetPassword(\n      email: $email\n      code: $code\n      newPassword: $newPassword\n      type: $type\n    ) {\n      message\n    }\n  }\n"): (typeof documents)["\n  mutation ResetPassword(\n    $email: String\n    $code: String\n    $newPassword: String\n    $type: UserType\n  ) {\n    resetPassword(\n      email: $email\n      code: $code\n      newPassword: $newPassword\n      type: $type\n    ) {\n      message\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  query RefreshQuery{\n    refresh{\n      accessToken\n    }\n  }\n"): (typeof documents)["\n  query RefreshQuery{\n    refresh{\n      accessToken\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

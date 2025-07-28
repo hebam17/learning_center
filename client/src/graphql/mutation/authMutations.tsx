@@ -33,3 +33,37 @@ export const LOGOUT = gql`
     }
   }
 `;
+
+export const FORGET_PASSWORD = gql`
+  mutation ForgetPassword($email: String, $type: UserType) {
+    forgetPassword(email: $email, type: $type) {
+      message
+    }
+  }
+`;
+
+export const VERIFY_OTP = gql`
+  mutation VerifyOTP($email: String, $code: String, $type: UserType) {
+    verifyOTP(email: $email, code: $code, type: $type) {
+      message
+    }
+  }
+`;
+
+export const RESET_PASSWORD = gql`
+  mutation ResetPassword(
+    $email: String
+    $code: String
+    $newPassword: String
+    $type: UserType
+  ) {
+    resetPassword(
+      email: $email
+      code: $code
+      newPassword: $newPassword
+      type: $type
+    ) {
+      message
+    }
+  }
+`;

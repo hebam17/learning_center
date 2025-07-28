@@ -350,13 +350,8 @@ const mutationFields = {
     args: {
       email: { type: GraphQLString },
       type: {
-        type: new GraphQLEnumType({
-          name: "forgetPasswordType",
-          values: {
-            student: { value: "Student" },
-            teacher: { value: "Teacher" },
-          },
-        }),
+        type: UserType,
+        defaultValue: UserType.getValue("student"),
       },
     },
 
@@ -401,7 +396,10 @@ const mutationFields = {
           specialChars: false,
         });
 
+        console.log("token:", token);
+
         user.resetPasswordToken = token;
+        // Token is only valid for 10 minutes
         user.resetPasswordExpiresAt = Date.now() + 10 * 60 * 1000;
 
         user.save();
@@ -420,19 +418,65 @@ const mutationFields = {
       }
     },
   },
+  verifyOTP: {
+    type: MessageType,
+    args: {
+      email: { type: GraphQLString },
+      code: { type: GraphQLString },
+      type: {
+        type: UserType,
+        defaultValue: UserType.getValue("student"),
+      },
+    },
+    async resolve(parent, args) {
+      try {
+        const type = args.type;
+
+        let verifiedUser;
+        if (type === "Teacher") {
+          verifiedUser = await Teacher.findOne({
+            email: args.email,
+            resetPasswordToken: args.code,
+            resetPasswordExpiresAt: { $gt: Date.now() },
+          });
+        } else if (type === "Student") {
+          verifiedUser = await Student.findOne({
+            email: args.email,
+            resetPasswordToken: args.code,
+            resetPasswordExpiresAt: { $gt: Date.now() },
+          });
+        }
+        if (!verifiedUser)
+          throw new GraphQLError("Sorry,this user couldn't be found!", {
+            extensions: {
+              code: "NOT FOUND",
+              http: { status: 404 },
+            },
+          });
+
+        if (verifiedUser) {
+          return {
+            message: "Your OTP is Valid!",
+          };
+        }
+
+        return {
+          message: "Your password was reset successfully, you can login now",
+        };
+      } catch (err) {
+        errorHandler(err);
+      }
+    },
+  },
+
   resetPassword: {
     type: MessageType,
     args: {
       email: { type: GraphQLString },
       code: { type: GraphQLString },
       type: {
-        type: new GraphQLEnumType({
-          name: "resetPasswordType",
-          values: {
-            student: { value: "Student" },
-            teacher: { value: "Teacher" },
-          },
-        }),
+        type: UserType,
+        defaultValue: UserType.getValue("student"),
       },
       newPassword: { type: GraphQLString },
     },

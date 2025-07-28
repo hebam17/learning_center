@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { LOGIN } from "../graphql/mutation/authMutations";
 import { UserType } from "../__generated__/graphql";
 import { validation } from "../utils/validations";
+import Cookies from "js-cookie";
 
 const Login = () => {
   const errRef = useRef<HTMLParagraphElement>(null);
@@ -23,6 +24,12 @@ const Login = () => {
     onCompleted: ({ login }) => {
       setErrorMessage("");
       console.log("login data:", login);
+
+      // const cookieTime = new Date(new Date().getTime() + 15 * 60 * 1000);
+      // Cookies.set("foo", "bar", {
+      //   expires: cookieTime,
+      // });
+      console.log("login data:", login?.data);
 
       navigate("/", {
         replace: true,

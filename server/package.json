@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon index.js"
+    "dev": "nodemon ./index.js"
   },
   "keywords": [],
   "author": "",
@@ -24,6 +24,7 @@
   },
   "devDependencies": {
     "dotenv": "^16.4.5",
-    "graphql-playground-middleware-express": "^1.7.23"
+    "graphql-playground-middleware-express": "^1.7.23",
+    "nodemon": "^3.1.10"
   }
 }

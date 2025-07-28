@@ -9,7 +9,7 @@ export default function NavHeader() {
   const screenLinkClass = (isActive: boolean): string =>
     isActive ? "screen-link active-screen-link" : "screen-link";
 
-  const isLoggedIn: boolean = true;
+  const isLoggedIn: boolean = false;
 
   const mobileLinkClass = (isActive: boolean): string =>
     isActive ? "mobile-link active-mobile-link" : "mobile-link";

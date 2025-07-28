@@ -13,8 +13,21 @@ import Login from "./pages/Login";
 import BecomeATeacher from "./pages/BecomeATeacher";
 import CreateNewTeacher from "./pages/CreateNewTeacher";
 import RegisterVerification from "./pages/RegisterVerification";
+import { useEffect } from "react";
+import AuthContextProvider from "./context/AuthContextProvider";
+import RecoveryEmailSend from "./pages/PasswordReset/RecoveryEmailSend";
+import PasswordRecovery from "./pages/PasswordReset/PasswordRecovery";
+import { ResetPassword } from "./pages/PasswordReset/ResetPassword";
 
 function App() {
+  useEffect(() => {
+    console.log("Hi i'm home");
+
+    return () => {
+      console.log("I'm outa home");
+    };
+  }, []);
+
   const router = createBrowserRouter([
     {
       element: <CustomLayout />,
@@ -31,6 +44,18 @@ function App() {
         {
           path: "/register-verification",
           element: <RegisterVerification />,
+        },
+        {
+          path: "/recovery-email-send",
+          element: <RecoveryEmailSend />,
+        },
+        {
+          path: "/recovery",
+          element: <PasswordRecovery />,
+        },
+        {
+          path: "/reset-password",
+          element: <ResetPassword />,
         },
       ],
     },
@@ -80,7 +105,16 @@ function App() {
     },
   ]);
 
-  return <RouterProvider router={router}></RouterProvider>;
+  return (
+    <AuthContextProvider
+      authInfo={{
+        accessToken:
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzA3YmI3YzBkMjg5MDRkNGI2NjY3OGIiLCJ1c2VybmFtZSI6Ik1lbmEgQWRhbSIsInJvbGVzIjpbIlN0dWRlbnQiXSwiaWF0IjoxNzQ2MTQzOTM3LCJleHAiOjE3NDYxNDQ4Mzd9.212uYgeB7A726kaAmHxf5wmRHrRgMD7_EyE4vG5iyVU",
+      }}
+    >
+      <RouterProvider router={router} />
+    </AuthContextProvider>
+  );
 }
 
 export default App;

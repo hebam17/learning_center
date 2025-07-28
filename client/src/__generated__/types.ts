@@ -49,6 +49,7 @@ export type Mutation = {
   updateTeacher?: Maybe<Teacher>;
   updateTeacherLesson?: Maybe<TeacherLesson>;
   verifyATeacher?: Maybe<Teacher>;
+  verifyOTP?: Maybe<Message>;
   whishlistAdd?: Maybe<TeacherLesson>;
   whishlistRemove?: Maybe<TeacherLesson>;
 };
@@ -115,7 +116,7 @@ export type MutationEnrollArgs = {
 
 export type MutationForgetPasswordArgs = {
   email?: InputMaybe<Scalars['String']['input']>;
-  type?: InputMaybe<ForgetPasswordType>;
+  type?: InputMaybe<UserType>;
 };
 
 
@@ -153,7 +154,7 @@ export type MutationResetPasswordArgs = {
   code?: InputMaybe<Scalars['String']['input']>;
   email?: InputMaybe<Scalars['String']['input']>;
   newPassword?: InputMaybe<Scalars['String']['input']>;
-  type?: InputMaybe<ResetPasswordType>;
+  type?: InputMaybe<UserType>;
 };
 
 
@@ -215,6 +216,13 @@ export type MutationVerifyATeacherArgs = {
   managerId?: InputMaybe<Scalars['ID']['input']>;
   teacherId?: InputMaybe<Scalars['ID']['input']>;
   verified?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+
+export type MutationVerifyOtpArgs = {
+  code?: InputMaybe<Scalars['String']['input']>;
+  email?: InputMaybe<Scalars['String']['input']>;
+  type?: InputMaybe<UserType>;
 };
 
 
@@ -392,11 +400,6 @@ export enum UserType {
   Teacher = 'teacher'
 }
 
-export enum ForgetPasswordType {
-  Student = 'student',
-  Teacher = 'teacher'
-}
-
 export enum LessonStatus {
   Completed = 'completed',
   New = 'new',
@@ -429,11 +432,6 @@ export enum MaterialUpdate {
   Philosophy = 'philosophy',
   Physics = 'physics',
   Psychology = 'psychology'
-}
-
-export enum ResetPasswordType {
-  Student = 'student',
-  Teacher = 'teacher'
 }
 
 export enum RoleUpdate {
@@ -482,6 +480,38 @@ export type LogoutMutationVariables = Exact<{
 
 
 export type LogoutMutation = { __typename?: 'Mutation', logout?: { __typename?: 'Message', message?: string | null } | null };
+
+export type ForgetPasswordMutationVariables = Exact<{
+  email?: InputMaybe<Scalars['String']['input']>;
+  type?: InputMaybe<UserType>;
+}>;
+
+
+export type ForgetPasswordMutation = { __typename?: 'Mutation', forgetPassword?: { __typename?: 'Message', message?: string | null } | null };
+
+export type VerifyOtpMutationVariables = Exact<{
+  email?: InputMaybe<Scalars['String']['input']>;
+  code?: InputMaybe<Scalars['String']['input']>;
+  type?: InputMaybe<UserType>;
+}>;
+
+
+export type VerifyOtpMutation = { __typename?: 'Mutation', verifyOTP?: { __typename?: 'Message', message?: string | null } | null };
+
+export type ResetPasswordMutationVariables = Exact<{
+  email?: InputMaybe<Scalars['String']['input']>;
+  code?: InputMaybe<Scalars['String']['input']>;
+  newPassword?: InputMaybe<Scalars['String']['input']>;
+  type?: InputMaybe<UserType>;
+}>;
+
+
+export type ResetPasswordMutation = { __typename?: 'Mutation', resetPassword?: { __typename?: 'Message', message?: string | null } | null };
+
+export type RefreshQueryQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type RefreshQueryQuery = { __typename?: 'RootQueryType', refresh?: { __typename?: 'Token', accessToken?: string | null } | null };
 
 export type GetCategoriesQueryVariables = Exact<{ [key: string]: never; }>;
 
