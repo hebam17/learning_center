@@ -41,8 +41,8 @@ export type Mutation = {
   login?: Maybe<Token>;
   logout?: Maybe<Message>;
   rating?: Maybe<Rate>;
-  register?: Maybe<RegisterSuccess>;
-  registerVerification?: Maybe<Token>;
+  register?: Maybe<Message>;
+  registerVerification?: Maybe<Message>;
   resetPassword?: Maybe<Message>;
   updateCategory?: Maybe<Category>;
   updateStudent?: Maybe<Student>;
@@ -258,12 +258,6 @@ export type RegisterInput = {
   type?: InputMaybe<UserType>;
 };
 
-export type RegisterSuccess = {
-  __typename?: 'RegisterSuccess';
-  message?: Maybe<Scalars['String']['output']>;
-  userId?: Maybe<Scalars['ID']['output']>;
-};
-
 export type RegisterVerificationInput = {
   code?: InputMaybe<Scalars['String']['input']>;
   type?: InputMaybe<UserType>;
@@ -275,7 +269,8 @@ export type RootQueryType = {
   allTeachersLessons?: Maybe<Array<Maybe<TeacherLesson>>>;
   categories?: Maybe<Array<Maybe<Category>>>;
   category?: Maybe<Category>;
-  refresh?: Maybe<Token>;
+  getId?: Maybe<Token>;
+  refresh?: Maybe<Message>;
   student?: Maybe<Student>;
   studentLesson?: Maybe<StudentLesson>;
   studentLessons?: Maybe<Array<Maybe<StudentLesson>>>;
@@ -392,7 +387,7 @@ export type TeacherLesson = {
 
 export type Token = {
   __typename?: 'Token';
-  accessToken?: Maybe<Scalars['String']['output']>;
+  idToken?: Maybe<Scalars['String']['output']>;
 };
 
 export enum UserType {
@@ -455,14 +450,14 @@ export type RegisterMutationVariables = Exact<{
 }>;
 
 
-export type RegisterMutation = { __typename?: 'Mutation', register?: { __typename?: 'RegisterSuccess', message?: string | null, userId?: string | null } | null };
+export type RegisterMutation = { __typename?: 'Mutation', register?: { __typename?: 'Message', message?: string | null } | null };
 
 export type RegisterVerificationMutationVariables = Exact<{
   input?: InputMaybe<RegisterVerificationInput>;
 }>;
 
 
-export type RegisterVerificationMutation = { __typename?: 'Mutation', registerVerification?: { __typename?: 'Token', accessToken?: string | null } | null };
+export type RegisterVerificationMutation = { __typename?: 'Mutation', registerVerification?: { __typename?: 'Message', message?: string | null } | null };
 
 export type LoginMutationVariables = Exact<{
   email?: InputMaybe<Scalars['String']['input']>;
@@ -471,7 +466,7 @@ export type LoginMutationVariables = Exact<{
 }>;
 
 
-export type LoginMutation = { __typename?: 'Mutation', login?: { __typename?: 'Token', accessToken?: string | null } | null };
+export type LoginMutation = { __typename?: 'Mutation', login?: { __typename?: 'Token', idToken?: string | null } | null };
 
 export type LogoutMutationVariables = Exact<{
   userId?: InputMaybe<Scalars['ID']['input']>;
@@ -511,7 +506,12 @@ export type ResetPasswordMutation = { __typename?: 'Mutation', resetPassword?: {
 export type RefreshQueryQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type RefreshQueryQuery = { __typename?: 'RootQueryType', refresh?: { __typename?: 'Token', accessToken?: string | null } | null };
+export type RefreshQueryQuery = { __typename?: 'RootQueryType', refresh?: { __typename?: 'Message', message?: string | null } | null };
+
+export type GetIdQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetIdQuery = { __typename?: 'RootQueryType', getId?: { __typename?: 'Token', idToken?: string | null } | null };
 
 export type GetCategoriesQueryVariables = Exact<{ [key: string]: never; }>;
 

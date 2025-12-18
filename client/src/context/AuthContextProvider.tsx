@@ -1,26 +1,41 @@
-import { createContext, ReactElement } from "react";
+import {
+  createContext,
+  Dispatch,
+  ReactNode,
+  SetStateAction,
+  useState,
+} from "react";
 import { jwtDecode } from "jwt-decode";
 
-export const UserContext = createContext({});
+type idDecoded = {
+  userId: string;
+  username: string;
+  roles: string;
+} | null;
 
-type AccessTokenType = {
-  accessToken: string | null;
-};
+// Define the interface for the object containing the state and setter
+export interface StateAndSetterObject {
+  idDecodedToken: idDecoded;
+  setIdToken: Dispatch<SetStateAction<IdTokenType>>;
+}
 
-type ChildrenType = ReactElement | null;
+export const UserContext = createContext<StateAndSetterObject>({
+  idDecodedToken: null,
+  setIdToken: () => {},
+});
 
-type Props = {
-  authInfo: AccessTokenType;
-  children: ChildrenType;
-};
+type IdTokenType = string | null;
 
-const AuthContextProvider = ({ children, authInfo }: Props) => {
-  const decoded =
-    authInfo && authInfo.accessToken && jwtDecode(authInfo.accessToken);
+const AuthContextProvider = ({ children }: { children: ReactNode }) => {
+  const [idToken, setIdToken] = useState<IdTokenType>(null);
+  const decoded: idDecoded = idToken ? jwtDecode(idToken) : null;
+  const contextData: StateAndSetterObject = {
+    idDecodedToken: decoded,
+    setIdToken,
+  };
 
-  console.log("decoded token:", decoded);
   return (
-    <UserContext.Provider value={authInfo}>{children}</UserContext.Provider>
+    <UserContext.Provider value={contextData}>{children}</UserContext.Provider>
   );
 };
 

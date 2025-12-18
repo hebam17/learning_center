@@ -50,7 +50,6 @@ export default function SearchHeader() {
         ? "categories"
         : `/categories/${categoryId}`;
     const match = matchPath({ path: newPath }, location.pathname);
-    console.log("match:", match);
     if (match === null) return navigate(newPath);
   }, [categoryId, location.pathname, navigate]);
 
@@ -63,12 +62,8 @@ export default function SearchHeader() {
       setErrorMessage("");
       console.log("logout data:", logout);
 
-      navigate("/", {
+      navigate("/login", {
         replace: true,
-        state: {
-          data: logout?.data,
-          type: UserType.Student,
-        },
       });
     },
   });

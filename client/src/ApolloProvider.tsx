@@ -8,6 +8,7 @@ const cache = new InMemoryCache();
 
 const httpLink = new HttpLink({
   uri: "http://localhost:8000/graphql",
+  credentials: "include",
 });
 
 const authLink = setContext((_, { headers }) => {
@@ -33,7 +34,6 @@ const authLink = setContext((_, { headers }) => {
 const client = new ApolloClient({
   link: authLink.concat(httpLink),
   cache,
-  credentials: "include",
 });
 
 export default client;

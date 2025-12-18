@@ -30,12 +30,8 @@ export default function NavHeader() {
       setNavOpen(false);
       console.log("logout data:", logout);
 
-      navigate("/", {
+      navigate("/login", {
         replace: true,
-        state: {
-          data: logout?.data,
-          type: UserType.Student,
-        },
       });
     },
   });

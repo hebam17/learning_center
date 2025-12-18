@@ -1,10 +1,10 @@
 import { useMutation } from "@apollo/client";
-import { useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { LOGIN } from "../graphql/mutation/authMutations";
 import { UserType } from "../__generated__/graphql";
 import { validation } from "../utils/validations";
-import Cookies from "js-cookie";
+import { UserContext } from "../context/AuthContextProvider";
 
 const Login = () => {
   const errRef = useRef<HTMLParagraphElement>(null);
@@ -13,6 +13,7 @@ const Login = () => {
   const [password, setPassword] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [passvisible, setPassvisible] = useState<boolean>(false);
+  const { idDecodedToken, setIdToken } = useContext(UserContext);
   const navigate = useNavigate();
 
   const [login, { loading, error, data }] = useMutation(LOGIN, {
@@ -25,18 +26,14 @@ const Login = () => {
       setErrorMessage("");
       console.log("login data:", login);
 
-      // const cookieTime = new Date(new Date().getTime() + 15 * 60 * 1000);
-      // Cookies.set("foo", "bar", {
-      //   expires: cookieTime,
-      // });
-      console.log("login data:", login?.data);
+      const { idToken } = login;
+      console.log("login data:", login.idToken);
+
+      // set the context data
+      setIdToken(idToken);
 
       navigate("/", {
         replace: true,
-        state: {
-          data: login?.data,
-          type: UserType.Student,
-        },
       });
     },
   });

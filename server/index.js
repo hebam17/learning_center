@@ -30,8 +30,8 @@ app.use(
 );
 app.disable("x-powered-by");
 
-app.use(express.json());
 app.use(cookieParser());
+app.use(express.json());
 
 // invoke the auth middleware
 app.use(Auth);

@@ -11,7 +11,6 @@ const otpGenerator = require("otp-generator");
 
 const {
   RegisterInputType,
-  RegisterSuccessType,
   TokenType,
   MessageType,
   RegisterVerificationInputType,
@@ -19,25 +18,30 @@ const {
 } = require("./Types");
 const Student = require("../models/Student");
 const Teacher = require("../models/Teacher");
-const { createToken, createAccessToken } = require("../utils/createToken");
+const {
+  createToken,
+  createIDToken,
+  setCookies,
+  clearCookies,
+} = require("../utils/createToken");
 const { errorHandler, idCheck } = require("../utils/errorHandler");
 // const { SendVerificationEmail } = require("../mail/emails");
 
 const queryFields = {
   refresh: {
-    type: TokenType,
+    type: MessageType,
 
     async resolve(parent, args, { req, res }) {
       try {
-        const cookies = req.raw.cookies;
-        if (!cookies?.token)
+        const cookies = req.cookies;
+        if (!cookies?.refreshToken)
           throw new GraphQLError("You are unauthorized", {
             extensions: {
               http: { status: 401 },
             },
           });
 
-        const refreshToken = cookies.token;
+        const refreshToken = cookies.refreshToken;
 
         const userData = jwt.verify(
           refreshToken,
@@ -53,8 +57,56 @@ const queryFields = {
             ? "Student"
             : "Teacher";
 
-          const { accessToken } = createAccessToken(user, type);
-          return { accessToken };
+          const { accessToken, refreshToken } = createToken(user, type);
+
+          setCookies(res, refreshToken, accessToken);
+
+          return { message: "The Token was successfully refreshed" };
+        }
+
+        throw new GraphQLError("You are unauthorized", {
+          extensions: {
+            code: "FORBIDDEN",
+            http: { status: 403 },
+          },
+        });
+      } catch (err) {
+        errorHandler(err);
+      }
+    },
+  },
+  getId: {
+    type: TokenType,
+
+    async resolve(parent, args, { req, res }) {
+      try {
+        const cookies = req.cookies;
+        if (!cookies?.refreshToken || !cookies?.accessToken)
+          throw new GraphQLError("You are unauthorized", {
+            extensions: {
+              http: { status: 401 },
+            },
+          });
+
+        const refreshToken = cookies.refreshToken;
+
+        const userData = jwt.verify(
+          refreshToken,
+          process.env.REFRESH_TOKEN_SECRET
+        );
+
+        const user = userData.roles.includes("Student")
+          ? await Student.findById(userData.userId)
+          : await Teacher.findById(userData.userId);
+
+        if (user) {
+          const type = userData.roles.includes("Student")
+            ? "Student"
+            : "Teacher";
+
+          const idToken = createIDToken(user, type);
+
+          return { idToken };
         }
 
         throw new GraphQLError("You are unauthorized", {
@@ -72,23 +124,8 @@ const queryFields = {
 
 const mutationFields = {
   register: {
-    type: RegisterSuccessType,
+    type: MessageType,
     args: {
-      // firstname: { type: GraphQLString },
-      // lastname: { type: GraphQLString },
-      // email: { type: GraphQLString },
-      // password: { type: GraphQLString },
-
-      // type: {
-      //   type: new GraphQLEnumType({
-      //     name: "registerType",
-      //     values: {
-      //       student: { value: "Student" },
-      //       teacher: { value: "Teacher" },
-      //     },
-      //   }),
-      // },
-
       input: { type: RegisterInputType },
     },
     async resolve(parent, { input }) {
@@ -165,7 +202,8 @@ const mutationFields = {
         //   (verificationToken)
         // );
 
-        return { message: "Registered successfully!", userId: newUser._id };
+        // return { message: "Registered successfully!", userId: newUser._id };
+        return { message: "User was Registered successfully!" };
       } catch (err) {
         console.log(err);
 
@@ -175,7 +213,7 @@ const mutationFields = {
   },
 
   registerVerification: {
-    type: TokenType,
+    type: MessageType,
     args: {
       input: { type: RegisterVerificationInputType },
     },
@@ -216,18 +254,6 @@ const mutationFields = {
             },
           });
 
-        const { accessToken, refreshToken } = createToken(
-          verifiedUser,
-          input.type
-        );
-        // set the http only cookie to send the refresh token
-        res.cookie("token", refreshToken, {
-          sameSite: "none",
-          htmlOnly: true,
-          secure: true,
-          maxAge: 7 * 24 * 60 * 60 * 1000,
-        });
-
         // set the user to active
         verifiedUser.isActive = true;
         verifiedUser.verificationEmailToken = undefined;
@@ -235,8 +261,10 @@ const mutationFields = {
         console.log(verifiedUser);
         verifiedUser.save();
 
-        // send the access token as a response to the client
-        return { accessToken };
+        // send a message as a response to the client
+        return {
+          message: "The user was verified successfully, Now you can Login!",
+        };
       } catch (err) {
         errorHandler(err);
       }
@@ -297,16 +325,16 @@ const mutationFields = {
         if (!isValidPassword)
           throw new GraphQLError("email or password is Invalid");
 
+        // Create an access token and refresh token
         const { accessToken, refreshToken } = createToken(user, type);
 
-        res.cookie("token", refreshToken, {
-          sameSite: "none",
-          secure: true,
-          httpOnly: true,
-          maxAge: 7 * 24 * 60 * 60 * 1000, // cookie expire in 7days like the refresh token
-        });
+        // Create an ID token
 
-        return { accessToken };
+        const idToken = createIDToken(user, type);
+
+        setCookies(res, refreshToken, accessToken);
+
+        return { idToken };
       } catch (err) {
         errorHandler(err);
       }
@@ -328,15 +356,12 @@ const mutationFields = {
         const { isAuth, user } = req.raw;
         console.log("user:", user);
         if (!isAuth || !user) {
-          const cookies = req.raw.cookies;
-          if (!cookies?.token) return { message: "You are already logged out" };
+          const cookies = req.cookies;
+          if (!cookies?.refreshToken)
+            return { message: "You are already logged out" };
         }
 
-        res.clearCookie("token", {
-          httpOnly: true,
-          sameSite: "none",
-          secure: true,
-        });
+        clearCookies(res);
 
         return { message: "You logged out successfully" };
       } catch (err) {
@@ -362,17 +387,6 @@ const mutationFields = {
           type === "Student"
             ? await Student.findOne({ email: args.email })
             : await Teacher.findOne({ email: args.email });
-
-        // } catch (err) {
-        //   throw new GraphQLError(
-        //     "Sorry we have a problem connecting to the database, Please try again later!",
-        //     {
-        //       extensions: {
-        //         http: { status: 500 },
-        //       },
-        //     }
-        //   );
-        // }
 
         if (!user)
           throw new GraphQLError("Sorry,this user couldn't be found!", {
@@ -404,7 +418,8 @@ const mutationFields = {
 
         user.save();
 
-        // sending reset password email
+        // sending reset password email =>  uncomment this and change settings in the "../mail/emails" file to send Reset Password email
+
         // SendPasswordResetEmail(
         //   (userEmail = args.email),
         //   (username = user.firstname),
@@ -418,6 +433,7 @@ const mutationFields = {
       }
     },
   },
+
   verifyOTP: {
     type: MessageType,
     args: {
@@ -461,7 +477,7 @@ const mutationFields = {
         }
 
         return {
-          message: "Your password was reset successfully, you can login now",
+          message: "Your code was successfully verified",
         };
       } catch (err) {
         errorHandler(err);

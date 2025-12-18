@@ -5,7 +5,6 @@ export const REGISTER = gql`
   mutation Register($input: RegisterInput) {
     register(input: $input) {
       message
-      userId
     }
   }
 `;
@@ -13,7 +12,7 @@ export const REGISTER = gql`
 export const REGISTER_VERIFICATION = gql`
   mutation RegisterVerification($input: RegisterVerificationInput) {
     registerVerification(input: $input) {
-      accessToken
+      message
     }
   }
 `;
@@ -21,7 +20,7 @@ export const REGISTER_VERIFICATION = gql`
 export const LOGIN = gql`
   mutation Login($email: String, $password: String, $type: UserType) {
     login(email: $email, password: $password, type: $type) {
-      accessToken
+      idToken
     }
   }
 `;

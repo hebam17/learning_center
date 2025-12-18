@@ -106,12 +106,7 @@ function App() {
   ]);
 
   return (
-    <AuthContextProvider
-      authInfo={{
-        accessToken:
-          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzA3YmI3YzBkMjg5MDRkNGI2NjY3OGIiLCJ1c2VybmFtZSI6Ik1lbmEgQWRhbSIsInJvbGVzIjpbIlN0dWRlbnQiXSwiaWF0IjoxNzQ2MTQzOTM3LCJleHAiOjE3NDYxNDQ4Mzd9.212uYgeB7A726kaAmHxf5wmRHrRgMD7_EyE4vG5iyVU",
-      }}
-    >
+    <AuthContextProvider>
       <RouterProvider router={router} />
     </AuthContextProvider>
   );
