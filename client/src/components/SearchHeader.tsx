@@ -36,7 +36,7 @@ export default function SearchHeader() {
   const dropDownRef = useRef<HTMLDivElement>(null);
 
   // FOR TESTING
-  const isLoggedIn: boolean = true;
+  const isLoggedIn: boolean = false;
   const username: string = "Jane Doe";
   const userId: string = "jkdslauf0eisurike3jwrl";
 

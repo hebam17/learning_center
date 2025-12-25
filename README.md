@@ -1,17 +1,19 @@
 # Learning / Courses center app (for senior high school)
 
-## Description
+![welcome-page](./proScreenshots/welcome-page.png)
+
+## 🔑 Description
 
 - An app to book courses for senior high school students
 
-### Features
+### 🚀 Features
 
 - Teachers : can be added, deleted, updated and create classes
 - Students : can be added, deleted, updated and enroll in classes
 - classes can be created, deleted, updated
 - and more
 
-## Technologies
+## 🌐 Technologies
 
 - For Backend
 
@@ -30,3 +32,7 @@
   - Tailwind
   - jsonwebtoken
   - and more
+
+## 🗄️ DB Diagram
+
+![welcome-page](./proScreenshots/learning_center_db.png)
