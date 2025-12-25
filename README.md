@@ -1,6 +1,6 @@
 # Learning / Courses center app (for senior high school)
 
-![welcome-page](./proScreenshots/welcome-page.png)
+![welcome-page](./proScreenshots/welcome_page.png)
 
 ## 🔑 Description
 
